@@ -1,6 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://b5mbm21ntgh5c"]
+[gd_scene load_steps=6 format=3 uid="uid://b5mbm21ntgh5c"]
 
-[ext_resource type="Script" path="res://player.gd" id="1_c7odt"]
+[ext_resource type="PackedScene" uid="uid://dfb5djd7gxtiv" path="res://player/player.tscn" id="1_c2twu"]
 [ext_resource type="MeshLibrary" uid="uid://bkfriufrnh86j" path="res://tileset.tres" id="1_s74ca"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_fkixh"]
@@ -16,10 +16,6 @@ sky = SubResource("Sky_pgclp")
 tonemap_mode = 2
 glow_enabled = true
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_jkpbf"]
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gf8gh"]
-
 [node name="world" type="Node"]
 
 [node name="environment" type="Node3D" parent="."]
@@ -28,27 +24,14 @@ glow_enabled = true
 environment = SubResource("Environment_tn5c0")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="environment"]
-transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+transform = Transform3D(-0.866024, -0.433016, 0.250001, 0, 0.499998, 0.866026, -0.500003, 0.749999, -0.43301, 3.94119, 9.01697, 0)
+visible = false
 shadow_enabled = true
 
 [node name="stage" type="Node3D" parent="."]
 
-[node name="player" type="CharacterBody3D" parent="stage"]
-transform = Transform3D(-4.37114e-08, 3.48787e-16, 1, 3.48787e-16, 1, -3.48787e-16, -1, 3.48787e-16, -4.37114e-08, 10.436, 1, 2.08165e-12)
-script = ExtResource("1_c7odt")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="stage/player"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 2.08165e-12, 2.08165e-12)
-mesh = SubResource("CapsuleMesh_jkpbf")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="stage/player"]
-shape = SubResource("CapsuleShape3D_gf8gh")
-
-[node name="head" type="Node3D" parent="stage/player"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 0.8, 2.08165e-12)
-
-[node name="Camera3D" type="Camera3D" parent="stage/player/head"]
-transform = Transform3D(1, 0, 0, 0, 1, 1.12238e-23, 0, 1.12238e-23, 1, 2.08165e-12, 2.08165e-12, 2.08165e-12)
+[node name="player" parent="stage" instance=ExtResource("1_c2twu")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -4.27412, 1, 0)
 
 [node name="GridMap" type="GridMap" parent="stage"]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
@@ -56,10 +39,10 @@ mesh_library = ExtResource("1_s74ca")
 cell_size = Vector3(1, 1, 1)
 cell_center_y = false
 data = {
-"cells": PackedInt32Array(65535, 65535, 0, 0, 65535, 0, 1, 65535, 0, 2, 65535, 0, 3, 65535, 0, 4, 65535, 0, 4, 0, 655360, 3, 0, 655360, 2, 0, 655360, 1, 0, 655360, 0, 0, 655360, 65535, 0, 655360, 65534, 1, 1441793, 65533, 2, 1441793, 65534, 65534, 1, 65533, 65533, 1, 65532, 65533, 1048577, 65531, 65534, 1048577, 65532, 2, 655361, 65531, 1, 655361, 65531, 65535, 1048576, 65531, 0, 1048576, 65533, 1, 1441795, 65534, 65535, 3, 65533, 65534, 3, 65532, 65534, 1048579, 65532, 1, 655363, 65534, 0, 1441795, 65533, 0, 1441794, 65532, 0, 1441794, 65532, 65535, 1441794, 65533, 65535, 2)
+"cells": PackedInt32Array(65535, 65535, 0, 0, 65535, 0, 1, 65535, 0, 2, 65535, 0, 3, 65535, 0, 4, 65535, 0, 3, 0, 655360, 2, 0, 655360, 1, 0, 655360, 0, 0, 655360, 65535, 0, 655360, 65534, 1, 1441793, 65533, 2, 1441793, 65534, 65534, 1, 65533, 65533, 1, 65532, 65533, 1048577, 65531, 65534, 1048577, 65532, 2, 655361, 65531, 1, 655361, 65531, 65535, 1048576, 65531, 0, 1048576, 65533, 1, 1441795, 65534, 65535, 3, 65533, 65534, 3, 65532, 65534, 1048579, 65532, 1, 655363, 65534, 0, 1441795, 65533, 0, 1441794, 65532, 0, 1441794, 65532, 65535, 1441794, 65533, 65535, 2, 5, 65534, 1048576, 5, 65533, 1048576, 5, 1, 1048576, 4, 0, 655360, 5, 2, 1048576, 5, 3, 1048576, 5, 65532, 1048576, 6, 3, 1441792, 6, 2, 1441792, 6, 1, 1441792, 7, 0, 655360, 6, 65533, 1441792, 6, 65532, 1441792, 7, 65535, 0, 6, 65534, 1441792, 6, 0, 1441795, 6, 65535, 3, 5, 65535, 1048579, 5, 0, 655363, 6, 65531, 1, 5, 65531, 1048577, 8, 65535, 1, 8, 0, 1441793, 6, 4, 1441793, 5, 4, 655361)
 }
 metadata/_editor_floor_ = Vector3(0, 0, 0)
 
-[node name="ground" type="CSGBox3D" parent="stage"]
-transform = Transform3D(30, 0, 0, 0, 1, 0, 0, 0, 30, 2.08165e-12, -0.51, 2.08165e-12)
-use_collision = true
+[node name="OmniLight3D" type="OmniLight3D" parent="stage"]
+transform = Transform3D(1, -3.48787e-16, 3.48787e-16, 3.48787e-16, 1, -3.48787e-16, -3.48787e-16, 3.48787e-16, 1, 2.08165e-12, 2.62566, -1.38592)
+light_color = Color(0.518481, 0.306402, 2.72013e-07, 1)
