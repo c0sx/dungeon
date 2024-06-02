@@ -15,7 +15,10 @@ func _input(event):
 		
 	if event is InputEventMouseMotion:
 		self._looking(event.relative)
-
+	
+	#if event is InputEventKey:
+		#self._handle_input_action(event)
+			
 func _physics_process(delta):
 	# Add the gravity.
 	if not is_on_floor():
@@ -38,6 +41,22 @@ func _moving(delta: float):
 		velocity.z = move_toward(velocity.z, 0, speed)
 
 	move_and_slide()
+
+func _handle_input_action(event: InputEventKey):
+	# check forward by position of camera
+	# rotate camera by q/e
+	# lerp for moving
+	if event.is_action_pressed("forward"):
+		velocity.z -= 32
+	elif event.is_action_pressed("backward"):
+		velocity.z += 32
+	elif event.is_action_pressed("left"):
+		velocity.x -= 32
+	elif event.is_action_pressed("right"):
+		velocity.x += 32
+		
+	move_and_slide()
+	
 
 func _looking(relative: Vector2):
 	var x = relative.x * -1
