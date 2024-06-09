@@ -8,7 +8,7 @@ extends Node3D
 func is_forward_colliding():
 	return forward.is_colliding()
 	
-func is_backward_colliditon():
+func is_backward_colliding():
 	return backward.is_colliding()
 
 func is_left_colliding():
