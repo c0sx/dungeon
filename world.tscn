@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://b5mbm21ntgh5c"]
 
 [ext_resource type="PackedScene" uid="uid://dfb5djd7gxtiv" path="res://player/player.tscn" id="1_c2twu"]
-[ext_resource type="MeshLibrary" uid="uid://byb2kc8sylbpj" path="res://resources/meshes/tileset3.tres" id="2_rbgyt"]
+[ext_resource type="MeshLibrary" uid="uid://bsqedl1i7616p" path="res://resources/meshes/tileset3.tres" id="2_rbgyt"]
 [ext_resource type="Script" path="res://input/input.gd" id="3_hbsq1"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_fkixh"]
@@ -44,7 +44,7 @@ mesh_library = ExtResource("2_rbgyt")
 cell_size = Vector3(1, 1, 1)
 cell_center_y = false
 data = {
-"cells": PackedInt32Array(65528, 0, 655360, 65528, 65535, 2, 65528, 65534, 0, 65529, 0, 655360, 65529, 65535, 2, 65529, 65534, 0, 65530, 65534, 0, 65530, 65535, 2, 65531, 65535, 2, 65531, 65534, 7, 65532, 65534, 7, 65533, 65534, 0, 65534, 65534, 0, 65535, 65534, 0, 65535, 65535, 655362, 65534, 65535, 655362, 65533, 65535, 655362, 65532, 65535, 655362, 65533, 0, 655360, 65534, 0, 655360, 65535, 0, 655360, 0, 65535, 1441796, 0, 0, 1441793, 65527, 65534, 1048581, 65527, 65535, 1048580, 65527, 0, 655361, 65530, 0, 655360, 65531, 0, 655360, 65532, 0, 655360, 1, 65528, 1441800, 0, 65534, 1)
+"cells": PackedInt32Array(65528, 0, 655360, 65528, 65535, 2, 65528, 65534, 0, 65529, 0, 655360, 65529, 65535, 2, 65529, 65534, 0, 65530, 65534, 0, 65530, 65535, 2, 65531, 65535, 2, 65531, 65534, 0, 65532, 65534, 7, 65533, 65534, 0, 65534, 65534, 0, 65535, 65534, 0, 65535, 65535, 655362, 65534, 65535, 655362, 65533, 65535, 655362, 65532, 65535, 655362, 65533, 0, 655360, 65534, 0, 655360, 65535, 0, 655360, 0, 65535, 1441800, 0, 0, 1441793, 65527, 65534, 1048581, 65527, 65535, 1048580, 65527, 0, 655361, 65530, 0, 655360, 65531, 0, 655360, 65532, 0, 655367, 0, 65534, 1)
 }
 metadata/_editor_floor_ = Vector3(0, 0, 0)
 
