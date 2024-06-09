@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3 uid="uid://cvq828qlqqjby"]
+
+[ext_resource type="PackedScene" uid="uid://028hrijxwt82" path="res://resources/glb/tilemap.glb" id="1_m3qf0"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_wjh38"]
+direction = Vector3(2.08165e-12, 1, 2.08165e-12)
+spread = 5.0
+gravity = Vector3(2.08165e-12, 2.08165e-12, 2.08165e-12)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_deigg"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(1, 0.188235, 0, 1)
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_36rco"]
+material = SubResource("StandardMaterial3D_deigg")
+size = Vector2(0.3, 0.3)
+
+[node name="tilemap" instance=ExtResource("1_m3qf0")]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="wall-torch/fire_emitter" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.416369, -0.363214)
+explosiveness = 0.4
+fixed_fps = 0
+process_material = SubResource("ParticleProcessMaterial_wjh38")
+draw_pass_1 = SubResource("QuadMesh_36rco")
+
+[node name="smoke_domain" parent="wall-torch" index="1"]
+transform = Transform3D(0.304674, 0, 0, 0, 0.317263, 0, 0, 0, 0.304674, 0.0136385, 2.60075, -0.944513)

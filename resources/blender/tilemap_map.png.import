@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c3jfq32l3i2yl"
-path.s3tc="res://.godot/imported/tileset2_map_n.png-b3a2b0313a06f9fae966b74751fe16eb.s3tc.ctex"
+uid="uid://dujflrhfv6tqy"
+path.s3tc="res://.godot/imported/tilemap_map.png-4d5b24136c0e796f6aa0beb046d0f527.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "37370ca8461ce3f960989d5a98167d0d"
+"md5": "1cc148ed8eab7e2874a3765a537e4eed"
 }
 
 [deps]
 
-source_file="res://resources/glb/tileset2_map_n.png"
-dest_files=["res://.godot/imported/tileset2_map_n.png-b3a2b0313a06f9fae966b74751fe16eb.s3tc.ctex"]
+source_file="res://resources/blender/tilemap_map.png"
+dest_files=["res://.godot/imported/tilemap_map.png-4d5b24136c0e796f6aa0beb046d0f527.s3tc.ctex"]
 
 [params]
 
@@ -23,12 +23,12 @@ compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
-compress/normal_map=1
+compress/normal_map=0
 compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1
-roughness/mode=1
-roughness/src_normal="res://resources/glb/tileset2_map_n.png"
+roughness/mode=0
+roughness/src_normal=""
 process/fix_alpha_border=true
 process/premult_alpha=false
 process/normal_map_invert_y=false
