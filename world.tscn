@@ -12,23 +12,11 @@ ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
 sky_material = SubResource("ProceduralSkyMaterial_fkixh")
 
 [sub_resource type="Environment" id="Environment_tn5c0"]
-background_mode = 2
 sky = SubResource("Sky_pgclp")
 tonemap_mode = 2
 glow_enabled = true
 
 [node name="world" type="Node"]
-
-[node name="environment" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00889158, 0, 0.00588512)
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="environment"]
-environment = SubResource("Environment_tn5c0")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="environment"]
-transform = Transform3D(-0.866024, -0.433016, 0.250001, 0, 0.499998, 0.866026, -0.500003, 0.749999, -0.43301, 3.94119, 9.01697, 0)
-visible = false
-shadow_enabled = true
 
 [node name="stage" type="Node3D" parent="."]
 
@@ -44,12 +32,20 @@ mesh_library = ExtResource("2_rbgyt")
 cell_size = Vector3(1, 1, 1)
 cell_center_y = false
 data = {
-"cells": PackedInt32Array(65528, 0, 655360, 65528, 65535, 2, 65528, 65534, 0, 65529, 0, 655360, 65529, 65535, 2, 65529, 65534, 0, 65530, 65534, 0, 65530, 65535, 2, 65531, 65535, 2, 65531, 65534, 0, 65532, 65534, 7, 65533, 65534, 0, 65534, 65534, 0, 65535, 65534, 0, 65535, 65535, 655362, 65534, 65535, 655362, 65533, 65535, 655362, 65532, 65535, 655362, 65533, 0, 655360, 65534, 0, 655360, 65535, 0, 655360, 0, 65535, 1441800, 0, 0, 1441797, 65527, 65534, 1048581, 65527, 65535, 1048580, 65527, 0, 655361, 65530, 0, 655360, 65531, 0, 655360, 65532, 0, 655367, 0, 65534, 1)
+"cells": PackedInt32Array(65528, 0, 655360, 65528, 65535, 2, 65528, 65534, 0, 65529, 0, 655360, 65529, 65535, 2, 65529, 65534, 0, 65530, 65534, 0, 65530, 65535, 2, 65531, 65535, 2, 65531, 65534, 0, 65532, 65534, 6, 65533, 65534, 0, 65534, 65534, 0, 65535, 65534, 0, 65535, 65535, 655362, 65534, 65535, 655362, 65533, 65535, 655362, 65532, 65535, 655362, 65533, 0, 655360, 65534, 0, 655360, 65535, 0, 655360, 0, 65535, 1441799, 0, 0, 1441800, 65527, 65534, 1048584, 65527, 65535, 1048580, 65527, 0, 655361, 65530, 0, 655360, 65531, 0, 655360, 65532, 0, 655366, 0, 65534, 1)
 }
 metadata/_editor_floor_ = Vector3(0, 0, 0)
 
 [node name="input" type="Node3D" parent="."]
 script = ExtResource("3_hbsq1")
+
+[node name="sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, -5.81886)
+shadow_enabled = true
+sky_mode = 2
+
+[node name="environment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_tn5c0")
 
 [connection signal="on_moving_backward" from="input" to="stage/player" method="move_backward"]
 [connection signal="on_moving_forward" from="input" to="stage/player" method="move_forward"]
