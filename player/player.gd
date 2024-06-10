@@ -13,7 +13,14 @@ signal on_strafe_right_command
 signal on_rotation_left
 signal on_rotation_right
 
+var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var tween: Tween
+
+func _physics_process(delta):
+	if not is_on_floor():
+		velocity.y -= gravity * delta
+	
+	move_and_slide()
 
 func move_forward(event: InputEventKey): 
 	if not _is_input_allowed(event) or head.is_forward_colliding():
