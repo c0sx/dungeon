@@ -6,13 +6,23 @@ extends Node3D
 @onready var right = $ray_cast_right
 
 func is_forward_colliding():
-	return forward.is_colliding()
+	var is_colliding = forward.is_colliding()
+	
+	print("is colliding", is_colliding)
+	
+	return is_colliding
 	
 func is_backward_colliding():
-	return backward.is_colliding()
+	var is_colliding = backward.is_colliding()
+	
+	return is_colliding
 
 func is_left_colliding():
-	return left.is_colliding()
+	var is_colliding = left.is_colliding()
+	
+	return is_colliding
 	
 func is_right_colliding():
-	return right.is_colliding()
+	var is_colliding = right.is_colliding()
+	
+	return is_colliding
