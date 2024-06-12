@@ -1,17 +1,11 @@
 extends CharacterBody3D
 
 @onready var head = $head
+@onready var hands = $hands
 
 @export var moving_time = 0.25
 @export var rotation_time = 0.2
 @export var moving_distance = 1.5
-
-signal on_moving_forward_command
-signal on_moving_backward_command
-signal on_strafe_left_command
-signal on_strafe_right_command
-signal on_rotation_left
-signal on_rotation_right
 
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var tween: Tween
@@ -66,6 +60,18 @@ func rotate_right(event: InputEventKey):
 	
 	_rotate(direction)
 	
+func pick_up_item(event: InputEventMouseButton):
+	var item = self.head.find_pickable_item(event);
+	
+	var collider = null
+	if item.has("collider"):
+		collider = item.get("collider")
+	
+	if collider == null:
+		return
+		
+	self.hands.pick_item(collider);
+		
 func _is_input_allowed(event: InputEventKey):
 	return not event.echo
 

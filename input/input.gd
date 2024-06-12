@@ -6,9 +6,11 @@ signal on_strafe_left(event: InputEventKey)
 signal on_strafe_right(event: InputEventKey)
 signal on_rotation_left(event: InputEventKey)
 signal on_rotation_right(event: InputEventKey)
+signal on_left_mouse_pressed(event: InputEventMouseButton)
 
 func _ready():
-	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
+	#Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
+	pass
 
 func _input(event):
 	if event.is_action("exit"):
@@ -27,3 +29,7 @@ func _input(event):
 			emit_signal("on_rotation_left", event)
 		elif event.is_action_pressed("rotate_right"):
 			emit_signal("on_rotation_right", event)
+			
+	if event is InputEventMouseButton:
+		if event.pressed:
+			emit_signal("on_left_mouse_pressed", event)
