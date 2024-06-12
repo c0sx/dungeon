@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://b5mbm21ntgh5c"]
+[gd_scene load_steps=9 format=3 uid="uid://b5mbm21ntgh5c"]
 
-[ext_resource type="PackedScene" uid="uid://dfb5djd7gxtiv" path="res://player/player.tscn" id="1_c2twu"]
-[ext_resource type="MeshLibrary" uid="uid://bsqedl1i7616p" path="res://resources/meshes/tileset/tileset3.tres" id="2_rbgyt"]
-[ext_resource type="Script" path="res://input/input.gd" id="3_hbsq1"]
-[ext_resource type="PackedScene" uid="uid://blntrro4lgg1u" path="res://torch/torch.tscn" id="3_j358p"]
+[ext_resource type="PackedScene" uid="uid://dfb5djd7gxtiv" path="res://player/player.tscn" id="1_sifr4"]
+[ext_resource type="MeshLibrary" uid="uid://bsqedl1i7616p" path="res://resources/meshes/tileset/tileset3.tres" id="2_r8fl2"]
+[ext_resource type="PackedScene" uid="uid://blntrro4lgg1u" path="res://torch/torch.tscn" id="3_dyiun"]
+[ext_resource type="Script" path="res://input/input.gd" id="4_xgl12"]
+[ext_resource type="PackedScene" uid="uid://busqnmf8s7q0m" path="res://world/gui/world_gui.tscn" id="5_y7ail"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_fkixh"]
 sky_top_color = Color(0, 0, 0, 1)
@@ -23,15 +24,15 @@ glow_enabled = true
 
 [node name="world" type="Node"]
 
-[node name="stage" type="Node3D" parent="."]
-
-[node name="player" parent="stage" instance=ExtResource("1_c2twu")]
+[node name="player" parent="." instance=ExtResource("1_sifr4")]
 transform = Transform3D(-4.37114e-08, -3.48787e-16, -1, 3.48787e-16, 1, -3.48787e-16, 1, -3.48787e-16, -4.37114e-08, -11.209, 1, -0.73)
+
+[node name="stage" type="Node3D" parent="."]
 
 [node name="GridMap" type="GridMap" parent="stage"]
 process_mode = 3
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
-mesh_library = ExtResource("2_rbgyt")
+mesh_library = ExtResource("2_r8fl2")
 cell_size = Vector3(1, 1, 1)
 cell_center_y = false
 data = {
@@ -41,11 +42,11 @@ metadata/_editor_floor_ = Vector3(0, 0, 0)
 
 [node name="torches" type="Node3D" parent="stage"]
 
-[node name="Torch" parent="stage/torches" instance=ExtResource("3_j358p")]
+[node name="Torch" parent="stage/torches" instance=ExtResource("3_dyiun")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.8736, 1.94192, -2.964)
 
 [node name="input" type="Node3D" parent="."]
-script = ExtResource("3_hbsq1")
+script = ExtResource("4_xgl12")
 
 [node name="sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, -5.81886)
@@ -55,10 +56,13 @@ sky_mode = 2
 [node name="environment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_tn5c0")
 
-[connection signal="on_left_mouse_pressed" from="input" to="stage/player" method="pick_up_item"]
-[connection signal="on_moving_backward" from="input" to="stage/player" method="move_backward"]
-[connection signal="on_moving_forward" from="input" to="stage/player" method="move_forward"]
-[connection signal="on_rotation_left" from="input" to="stage/player" method="rotate_left"]
-[connection signal="on_rotation_right" from="input" to="stage/player" method="rotate_right"]
-[connection signal="on_strafe_left" from="input" to="stage/player" method="strafe_left"]
-[connection signal="on_strafe_right" from="input" to="stage/player" method="strafe_right"]
+[node name="GUI" parent="." instance=ExtResource("5_y7ail")]
+
+[connection signal="torch_picked" from="player" to="GUI" method="_on_player_torch_picked"]
+[connection signal="on_left_mouse_pressed" from="input" to="player" method="pick_up_item"]
+[connection signal="on_moving_backward" from="input" to="player" method="move_backward"]
+[connection signal="on_moving_forward" from="input" to="player" method="move_forward"]
+[connection signal="on_rotation_left" from="input" to="player" method="rotate_left"]
+[connection signal="on_rotation_right" from="input" to="player" method="rotate_right"]
+[connection signal="on_strafe_left" from="input" to="player" method="strafe_left"]
+[connection signal="on_strafe_right" from="input" to="player" method="strafe_right"]
