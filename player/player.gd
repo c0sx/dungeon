@@ -1,7 +1,7 @@
 extends CharacterBody3D
 
 @onready var head = $head
-@onready var hand = $hand
+@onready var hands = $hands
 
 @export var moving_time = 0.25
 @export var rotation_time = 0.2
@@ -70,7 +70,7 @@ func pick_up_item(event: InputEventMouseButton):
 	if collider == null:
 		return
 		
-	self.hand.pick_item(collider);
+	self.hands.pick_item(collider);
 		
 func _is_input_allowed(event: InputEventKey):
 	return not event.echo

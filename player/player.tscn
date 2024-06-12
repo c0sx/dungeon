@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://dfb5djd7gxtiv"]
+[gd_scene load_steps=7 format=3 uid="uid://dfb5djd7gxtiv"]
 
 [ext_resource type="Script" path="res://player/player.gd" id="1_hbxx5"]
 [ext_resource type="Script" path="res://player/head.gd" id="2_n5tf3"]
+[ext_resource type="Script" path="res://player/hands.gd" id="3_605u0"]
 [ext_resource type="Script" path="res://player/hand.gd" id="3_tfgst"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_oubpb"]
@@ -11,11 +12,11 @@
 [node name="player" type="CharacterBody3D"]
 script = ExtResource("1_hbxx5")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="body" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("BoxMesh_oubpb")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="collision" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, -0.5, 2.08165e-12)
 shape = SubResource("BoxShape3D_cvh2j")
 
@@ -38,5 +39,10 @@ transform = Transform3D(4.37114e-08, 1.5, 8.74228e-08, 1, -6.55671e-08, -3.48787
 [node name="ray_cast_right" type="RayCast3D" parent="head"]
 transform = Transform3D(-4.37114e-08, -1.5, 3.48787e-16, 1, -6.55671e-08, -3.48787e-16, 3.48787e-16, 5.2318e-16, 1, 2.08165e-12, 2.08165e-12, 2.08165e-12)
 
-[node name="hand" type="Node3D" parent="."]
+[node name="hands" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.263076, 0)
+script = ExtResource("3_605u0")
+
+[node name="right_hand" type="Node3D" parent="hands"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.652491, 0.0685455, -0.61435)
 script = ExtResource("3_tfgst")
