@@ -8,3 +8,4 @@ func picked():
 func _hide_flame():
 	#flame.emitting = false
 	pass;
+
