@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://df421m1fr6e5l"
-path="res://.godot/imported/icon.jpg-e06642f2a1ceaa73c4657f6291acba4b.ctex"
+uid="uid://fa7xbr5w0xbe"
+path="res://.godot/imported/torch-icon.png-6209a339c510f1fe4a86fb8efdc08c98.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://torch/icon.jpg"
-dest_files=["res://.godot/imported/icon.jpg-e06642f2a1ceaa73c4657f6291acba4b.ctex"]
+source_file="res://torch/torch-icon.png"
+dest_files=["res://.godot/imported/torch-icon.png-6209a339c510f1fe4a86fb8efdc08c98.ctex"]
 
 [params]
 

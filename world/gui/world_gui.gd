@@ -1,7 +1,6 @@
 extends Control
 
-@onready var hands = $MarginContainer/HandsContainer
+@onready var player_bar = $PlayerBar
 
 func _on_player_torch_picked():
-	self.hands.set_right_hand()
-	
+	player_bar.set_item();
