@@ -7,6 +7,8 @@ extends CharacterBody3D
 @export var rotation_time = 0.2
 @export var moving_distance = 1.5
 
+signal torch_picked
+
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var tween: Tween
 
@@ -71,6 +73,7 @@ func pick_up_item(event: InputEventMouseButton):
 		return
 		
 	self.hands.pick_item(collider);
+	emit_signal("torch_picked")
 		
 func _is_input_allowed(event: InputEventKey):
 	return not event.echo
