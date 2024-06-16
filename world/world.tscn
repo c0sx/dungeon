@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://b5mbm21ntgh5c"]
+[gd_scene load_steps=10 format=3 uid="uid://b5mbm21ntgh5c"]
 
 [ext_resource type="PackedScene" uid="uid://dfb5djd7gxtiv" path="res://player/player.tscn" id="1_sifr4"]
 [ext_resource type="MeshLibrary" uid="uid://bsqedl1i7616p" path="res://resources/meshes/tileset/tileset3.tres" id="2_r8fl2"]
 [ext_resource type="PackedScene" uid="uid://blntrro4lgg1u" path="res://torch/torch.tscn" id="3_dyiun"]
+[ext_resource type="PackedScene" uid="uid://b4v54kliacpuy" path="res://hidden_wall/hidden_wall.tscn" id="4_nwspd"]
 [ext_resource type="Script" path="res://input/input.gd" id="4_xgl12"]
 [ext_resource type="PackedScene" uid="uid://busqnmf8s7q0m" path="res://world/gui/world_gui.tscn" id="5_y7ail"]
 
@@ -24,41 +25,46 @@ glow_enabled = true
 
 [node name="world" type="Node"]
 
-[node name="player" parent="." instance=ExtResource("1_sifr4")]
-transform = Transform3D(-4.37114e-08, -3.48787e-16, -1, 3.48787e-16, 1, -3.48787e-16, 1, -3.48787e-16, -4.37114e-08, -11.209, 1, -0.73)
-
-[node name="stage" type="Node3D" parent="."]
-
-[node name="GridMap" type="GridMap" parent="stage"]
+[node name="GridMap" type="GridMap" parent="."]
 process_mode = 3
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
 mesh_library = ExtResource("2_r8fl2")
 cell_size = Vector3(1, 1, 1)
 cell_center_y = false
 data = {
-"cells": PackedInt32Array(65528, 0, 655360, 65528, 65535, 2, 65528, 65534, 0, 65529, 0, 655360, 65529, 65535, 2, 65529, 65534, 0, 65530, 65534, 0, 65530, 65535, 2, 65531, 65535, 2, 65531, 65534, 0, 65532, 65534, 0, 65533, 65534, 0, 65534, 65534, 0, 65535, 65534, 0, 65535, 65535, 655362, 65534, 65535, 655362, 65533, 65535, 655362, 65532, 65535, 655362, 65534, 0, 655360, 65535, 0, 655360, 0, 65535, 1441796, 0, 0, 1441798, 65527, 65534, 1048582, 65527, 65535, 1048580, 65527, 0, 655361, 65530, 0, 655360, 65531, 0, 655360, 65532, 0, 655360, 0, 65534, 1, 65533, 0, 655360)
+"cells": PackedInt32Array(65528, 0, 655360, 65528, 65535, 2, 65528, 65534, 0, 65529, 0, 655360, 65529, 65535, 2, 65529, 65534, 0, 65530, 65534, 0, 65530, 65535, 2, 65531, 65535, 2, 65531, 65534, 0, 65532, 65534, 0, 65533, 65534, 0, 65534, 65534, 0, 65535, 65534, 0, 65535, 65535, 655362, 65534, 65535, 655362, 65533, 65535, 655362, 65532, 65535, 655362, 65534, 0, 655360, 65535, 0, 655360, 0, 0, 1441798, 65527, 65534, 1048582, 65527, 65535, 1048580, 65527, 0, 655361, 65530, 0, 655360, 65531, 0, 655360, 65532, 0, 655360, 0, 65534, 1, 65533, 0, 655360, 0, 65535, 655362, 3, 65535, 2, 4, 65534, 1, 4, 65535, 1441796, 3, 0, 655360, 4, 0, 1441798, 3, 65534, 0, 2, 0, 655360, 2, 65535, 2, 2, 65534, 0, 1, 0, 655360, 1, 65535, 2, 1, 65534, 0)
 }
 metadata/_editor_floor_ = Vector3(0, 0, 0)
 
-[node name="torches" type="Node3D" parent="stage"]
+[node name="torches" type="Node3D" parent="GridMap"]
+transform = Transform3D(0.666667, 0, 0, 0, 0.666667, 0, 0, 0, 0.666667, 0, 0, 0)
 
-[node name="Torch" parent="stage/torches" instance=ExtResource("3_dyiun")]
+[node name="Torch" parent="GridMap/torches" instance=ExtResource("3_dyiun")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.8736, 1.94192, -2.964)
 
-[node name="input" type="Node3D" parent="."]
-script = ExtResource("4_xgl12")
+[node name="walls" type="Node3D" parent="GridMap"]
 
-[node name="sun" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, -5.81886)
-shadow_enabled = true
-sky_mode = 2
+[node name="HiddenWall" parent="GridMap/walls" instance=ExtResource("4_nwspd")]
+collision_layer = 5
+collision_mask = 0
+
+[node name="GUI" parent="." instance=ExtResource("5_y7ail")]
 
 [node name="environment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_tn5c0")
 
-[node name="GUI" parent="." instance=ExtResource("5_y7ail")]
+[node name="sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866024, -0.433016, 0.250001, 0, 0.499998, 0.866026, -0.500003, 0.749999, -0.43301, 0, 0, -5.81886)
+shadow_enabled = true
+sky_mode = 2
 
-[connection signal="torch_picked" from="player" to="GUI" method="_on_player_torch_picked"]
+[node name="input" type="Node3D" parent="."]
+script = ExtResource("4_xgl12")
+
+[node name="player" parent="." instance=ExtResource("1_sifr4")]
+transform = Transform3D(-4.37114e-08, -3.48787e-16, -1, 3.48787e-16, 1, -3.48787e-16, 1, -3.48787e-16, -4.37114e-08, -12.7944, 1, -0.73)
+
+[connection signal="on_left_mouse_pressed" from="input" to="player" method="push_button"]
 [connection signal="on_left_mouse_pressed" from="input" to="player" method="pick_up_item"]
 [connection signal="on_moving_backward" from="input" to="player" method="move_backward"]
 [connection signal="on_moving_forward" from="input" to="player" method="move_forward"]
@@ -66,3 +72,4 @@ environment = SubResource("Environment_tn5c0")
 [connection signal="on_rotation_right" from="input" to="player" method="rotate_right"]
 [connection signal="on_strafe_left" from="input" to="player" method="strafe_left"]
 [connection signal="on_strafe_right" from="input" to="player" method="strafe_right"]
+[connection signal="torch_picked" from="player" to="GUI" method="_on_player_torch_picked"]

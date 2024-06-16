@@ -61,6 +61,19 @@ func rotate_right(event: InputEventKey):
 	var direction = deg_to_rad(-90)
 	
 	_rotate(direction)
+
+func push_button(event: InputEventMouseButton):
+	var item = self.head.find_button(event);
+	
+	var collider = null
+	if item.has("collider"):
+		collider = item.get("collider")
+		
+	if collider == null:
+		return
+		
+	print(collider)
+	collider.queue_free()
 	
 func pick_up_item(event: InputEventMouseButton):
 	var item = self.head.find_pickable_item(event);
