@@ -20,12 +20,11 @@ glow_enabled = true
 [node name="Maze" type="Node3D"]
 script = ExtResource("1_sc1mc")
 map_height = 100
-rooms_amount = 30
-min_width_of_room = 6
-max_width_of_room = 18
-min_heigth_of_room = 6
-max_heigth_of_room = 18
+rooms_amount = 10
+min_size_of_room = 10
+max_size_of_room = 20
 range_between_rooms = 3
+width_of_corridor_collision = 3
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_kj1si")
