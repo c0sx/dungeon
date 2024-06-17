@@ -95,7 +95,9 @@ func _check_intersections(room: Room, rooms: Array[Room]) -> bool:
 	
 func _draw_rooms():
 	for room in rooms:
-		_draw_room(room)
+		await _draw_room(room)
+		await get_tree().create_timer(WAIT_TIME).timeout
+		
 
 func _draw_room(room: Room):
 	var item_id = grid_map.mesh_library.find_item_by_name("floor-opened")
@@ -130,65 +132,49 @@ func _is_allowed_for_path(position: Vector3i) -> bool:
 		return cell == grid_map.INVALID_CELL_ITEM	
 	)
 
+# https://weblog.jamisbuck.org/2011/1/27/maze-generation-growing-tree-algorithm
 func _fill_corridor(position: Vector3i):
 	var item_id = grid_map.mesh_library.find_item_by_name("floor-opened")
-	
-	var positions: Array[Vector3i] = []
-	await _visit_point(position, Vector3i.ZERO, item_id, positions)
+	var positions: Array[Vector3i] = [position]
 	
 	while positions.size() > 0:
-		var position_index = randi() % positions.size()
+		var position_index = positions.size() - 1
 		var current_position = positions[position_index]
-		var last_position = positions.pop_back()
 		
-		if position_index < positions.size():
-			positions[position_index] = last_position
+		grid_map.set_cell_item(current_position, item_id)
+		await get_tree().create_timer(WAIT_TIME).timeout
+		
+		var unchecked_directions = _get_unvisited_neighbors(current_position)
+		
+		if unchecked_directions.size() == 0:
+			positions.remove_at(position_index)
+		else:
+			unchecked_directions.shuffle()
 			
-		var directions = [Vector3i.RIGHT, Vector3i.BACK, Vector3i.LEFT, Vector3i.FORWARD]
-		directions.sort_custom(func(a, b):
-			return randi() % 2 == 0	
-		)
-		
-		while directions.size() > 0:
-			var direction_index = randi() % directions.size()
-			var direction = directions.pop_at(direction_index)
-			
-			current_position = await _visit_point(current_position, direction, item_id, positions)
-		
-func _visit_point(position: Vector3i, direction: Vector3i, item_id: int, positions: Array[Vector3i]) -> Vector3i: 
-	var is_allowed = true
-	var pos = position
-	var current_length = 0
+			var direction = unchecked_directions.pop_back()
+			positions.append(current_position + direction)
+
+func _get_unvisited_neighbors(position: Vector3i) -> Array[Vector3i]:
+	var directions: Array[Vector3i] = [Vector3i.RIGHT, Vector3i.BACK, Vector3i.LEFT, Vector3i.FORWARD]
 	
-	while is_allowed and current_length < corridor_max_length:
-		var current_pos = pos + direction
-		var points = _get_points_for_direction(current_pos, direction)
+	return directions.filter(func (direction):
+		var points = _get_collision_constraints(position + direction, direction)
 		
-		is_allowed = points.all(func (point):
+		return points.all(func (point): 
 			var cell = grid_map.get_cell_item(point)
 			
 			return cell == grid_map.INVALID_CELL_ITEM
 		)
-		
-		if is_allowed:
-			grid_map.set_cell_item(current_pos, item_id)
-			positions.append(current_pos)
-			
-			await get_tree().create_timer(WAIT_TIME).timeout
-			pos = current_pos
-		
-		current_length += 1
-	
-	return pos
-	
-func _get_points_for_direction(position: Vector3i, direction: Vector3i) -> Array[Vector3i]:
+	)
+
+func _get_collision_constraints(position: Vector3i, direction: Vector3i) -> Array[Vector3i]:
 	var next_position = position + direction
 	
 	if direction == Vector3i.FORWARD or direction == Vector3i.BACK:
 		return [
-			position, # current
-			position + Vector3i.RIGHT, # left
-			position + Vector3i.LEFT, # right
+			position,
+			position + Vector3i.RIGHT,
+			position + Vector3i.LEFT,
 			next_position,
 			next_position + Vector3i.RIGHT,
 			next_position + Vector3i.LEFT
