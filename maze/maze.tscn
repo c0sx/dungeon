@@ -20,6 +20,7 @@ glow_enabled = true
 [node name="Maze" type="Node3D"]
 script = ExtResource("1_sc1mc")
 map_height = 100
+map_border = 10
 rooms_amount = 30
 rooms_min_size = 6
 rooms_max_size = 14

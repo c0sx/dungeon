@@ -10,7 +10,7 @@ func _init(tree: SceneTree, grid_map: GridMap):
 func draw(map: Map, min_length: int):
 	for y in range(map.get_min_y(), map.get_max_y()):
 		for x in range(map.get_min_x(), map.get_max_x()):
-			var point = Vector3i(x + 10, 0, y + 20)
+			var point = Vector3i(x, 0, y)
 			var is_allowed = _is_allowed_for_path(map, point)
 			
 			if is_allowed:
@@ -54,9 +54,8 @@ func _fill_passageway(map: Map, position: Vector3i, min_length: int):
 	while positions.size() > 0:
 		var position_index = positions.size() - 1
 		var current_position = positions[position_index]
-		
 		_grid_map.set_cell_item(current_position, item_id)
-		await _tree.create_timer(0).timeout
+		#await _tree.create_timer(0).timeout
 		
 		var unchecked_directions = await _get_unvisited_neighbors(map, current_position)
 		
@@ -77,13 +76,8 @@ func _get_unvisited_neighbors(map: Map, position: Vector3i) -> Array[Vector3i]:
 	for direction in directions:
 		var collision_rect = _get_collision_constraints(map, position, direction)
 		
-		#
-		#			
-		# [2;0;2] - [3;0;2] [4;0;2]
-		#			[3;0;3] [4;0;3]
-		
 		## region
-		## render for tests
+		## render collisions for tests
 		#var collisions = collision_rect.filter(func (one):
 			#return _grid_map.get_cell_item(one) == _grid_map.INVALID_CELL_ITEM	
 		#)
@@ -92,12 +86,12 @@ func _get_unvisited_neighbors(map: Map, position: Vector3i) -> Array[Vector3i]:
 			#var item_id = _grid_map.mesh_library.find_item_by_name("floor-opened")
 			#_grid_map.set_cell_item(point, item_id)
 			#
-		#await _tree.create_timer(0.5).timeout
+		#await _tree.create_timer(0).timeout
 		#
 		#for point in collisions:
 			#_grid_map.set_cell_item(point, _grid_map.INVALID_CELL_ITEM)
 			#
-		#await _tree.create_timer(0.5).timeout
+		#await _tree.create_timer(0).timeout
 		### endregion
 			
 		var is_allowed = collision_rect.size() > 0 and collision_rect.all(func (point): 
@@ -124,8 +118,6 @@ func _get_current_direction(current_length: int, current_direction: Vector3i, un
 # point: [0;0]
 # direction: Vector3i.RIGHT
 #
-#			| width_of_corridor_collision: 2
-#			|
 #   		| [3;0;3] [4;0;3]
 # [2;0;2] 	| [3;0;2] [4;0;2]
 #   		| [3;0;1] [4;0;1]
