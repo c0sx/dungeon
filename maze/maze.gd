@@ -18,7 +18,6 @@ extends Node3D
 @export_subgroup("passageway")
 @export var passageway_width: int = 1
 @export var passageway_min_length: int = 5
-@export var passageway_head_collistion_size: int = 3
 
 var _map_generator: MapGenerator
 var _rooms_generator: RoomsGenerator
@@ -35,7 +34,7 @@ func generate():
 	
 	var map = await _map_generator.draw(map_width, map_height, map_border)
 	await _rooms_generator.draw(map, rooms_amount, rooms_min_size, rooms_max_size, rooms_range_between, rooms_iterations)
-	await _passageways_generator.draw(map, passageway_head_collistion_size, passageway_min_length)
+	await _passageways_generator.draw(map, passageway_min_length)
 	
 func _clear_all():
 	var used = grid_map.get_used_cells()

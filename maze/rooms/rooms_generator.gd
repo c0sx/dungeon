@@ -8,7 +8,7 @@ func _init(grid_map: GridMap):
 func draw(map: Map, amount: int, min_size: int, max_size: int, range_between_rooms: int, iterations: int) -> Array[Room]:
 	var rooms = _build_rooms(map, amount, min_size, max_size, range_between_rooms, iterations)
 	_draw_rooms(rooms)
-	
+
 	return rooms
 
 func _build_rooms(map: Map, amount: int, min_size: int, max_size: int, range: int, iterations: int) -> Array[Room]:

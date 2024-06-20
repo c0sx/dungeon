@@ -7,48 +7,45 @@ func _init(tree: SceneTree, grid_map: GridMap):
 	_tree = tree
 	_grid_map = grid_map
 	
-func draw(map: Map, collision_width: int, min_length: int):
-	for x in range(map.get_min_x(), map.get_max_x()):
-		for y in range(map.get_min_y(), map.get_max_y()):
-			var point = Vector3i(x, 0, y)
-			var is_allowed = _is_allowed_for_path(map, point, collision_width)
+func draw(map: Map, min_length: int):
+	for y in range(map.get_min_y(), map.get_max_y()):
+		for x in range(map.get_min_x(), map.get_max_x()):
+			var point = Vector3i(x + 10, 0, y + 20)
+			var is_allowed = _is_allowed_for_path(map, point)
 			
 			if is_allowed:
-				await _fill_passageway(map, point, collision_width, min_length)
+				await _fill_passageway(map, point, min_length)
 
-func _is_allowed_for_path(map: Map, position: Vector3i, collision_width: int) -> bool:
+func _is_allowed_for_path(map: Map, position: Vector3i) -> bool:
 	var directions: Array[Vector3i] = []
 	
-	for w in range(0, collision_width):
+	for w in range(0, 2):
 		var left_position = position + Vector3i.LEFT * w
 		var right_position = position + Vector3i.RIGHT * w
+		directions.append(left_position)
+		directions.append(right_position)
 		
-		for h in range(0, collision_width):
+		for h in range(1, 2):
 			var top_left_position = left_position + Vector3i.FORWARD * h
 			var top_right_position = right_position + Vector3i.FORWARD * h
 			var bottom_left_position = left_position + Vector3i.BACK * h
 			var bottom_right_position = right_position + Vector3i.BACK * h
 			
-			if map.has_point(top_left_position):
-				directions.append(top_left_position)
-				
-			if map.has_point(top_right_position):
-				directions.append(top_right_position)
-				
-			if map.has_point(bottom_left_position):
-				directions.append(bottom_left_position)
-				
-			if map.has_point(bottom_right_position):
-				directions.append(bottom_right_position)
-			
-	return directions.all(func (direction):
-		var cell = _grid_map.get_cell_item(direction)
-		
-		return cell == _grid_map.INVALID_CELL_ITEM
+			directions.append(top_left_position)
+			directions.append(top_right_position)
+			directions.append(bottom_left_position)
+			directions.append(bottom_right_position)
+	
+	var filtered = directions.filter(func (point):
+		return map.has_point(point)
+	)
+	
+	return filtered.all(func (direction):
+		return _grid_map.get_cell_item(direction) == _grid_map.INVALID_CELL_ITEM
 	)
 	
 # https://weblog.jamisbuck.org/2011/1/27/maze-generation-growing-tree-algorithm
-func _fill_passageway(map: Map, position: Vector3i, collision_width: int, min_length: int):
+func _fill_passageway(map: Map, position: Vector3i, min_length: int):
 	var item_id = _grid_map.mesh_library.find_item_by_name("floor-opened")
 	var positions: Array[Vector3i] = [position]
 	var current_corridor_length = 0
@@ -61,7 +58,7 @@ func _fill_passageway(map: Map, position: Vector3i, collision_width: int, min_le
 		_grid_map.set_cell_item(current_position, item_id)
 		await _tree.create_timer(0).timeout
 		
-		var unchecked_directions = _get_unvisited_neighbors(map, current_position, collision_width)
+		var unchecked_directions = await _get_unvisited_neighbors(map, current_position)
 		
 		if unchecked_directions.size() == 0:
 			positions.remove_at(position_index)
@@ -73,18 +70,44 @@ func _fill_passageway(map: Map, position: Vector3i, collision_width: int, min_le
 				
 			positions.append(current_position + current_direction)
 
-func _get_unvisited_neighbors(map: Map, position: Vector3i, collision_width: int) -> Array[Vector3i]:
+func _get_unvisited_neighbors(map: Map, position: Vector3i) -> Array[Vector3i]:
 	var directions: Array[Vector3i] = [Vector3i.RIGHT, Vector3i.BACK, Vector3i.LEFT, Vector3i.FORWARD]
+	var filtered: Array[Vector3i] = []
 	
-	return directions.filter(func (direction):
-		var points = _get_collision_constraints(map, position, direction, collision_width)
+	for direction in directions:
+		var collision_rect = _get_collision_constraints(map, position, direction)
 		
-		return points.all(func (point): 
-			var cell = _grid_map.get_cell_item(point)
+		#
+		#			
+		# [2;0;2] - [3;0;2] [4;0;2]
+		#			[3;0;3] [4;0;3]
+		
+		## region
+		## render for tests
+		#var collisions = collision_rect.filter(func (one):
+			#return _grid_map.get_cell_item(one) == _grid_map.INVALID_CELL_ITEM	
+		#)
+		#
+		#for point in collisions:
+			#var item_id = _grid_map.mesh_library.find_item_by_name("floor-opened")
+			#_grid_map.set_cell_item(point, item_id)
+			#
+		#await _tree.create_timer(0.5).timeout
+		#
+		#for point in collisions:
+			#_grid_map.set_cell_item(point, _grid_map.INVALID_CELL_ITEM)
+			#
+		#await _tree.create_timer(0.5).timeout
+		### endregion
 			
-			return cell == _grid_map.INVALID_CELL_ITEM
+		var is_allowed = collision_rect.size() > 0 and collision_rect.all(func (point): 
+			return _grid_map.get_cell_item(point) == _grid_map.INVALID_CELL_ITEM
 		)
-	)
+		
+		if is_allowed:
+			filtered.append(direction)
+			
+	return filtered
 
 func _get_current_direction(current_length: int, current_direction: Vector3i, unchecked_directions: Array[Vector3i], min_lenght: int):
 	if unchecked_directions.has(current_direction) and current_length < min_lenght:
@@ -106,25 +129,25 @@ func _get_current_direction(current_length: int, current_direction: Vector3i, un
 #   		| [3;0;3] [4;0;3]
 # [2;0;2] 	| [3;0;2] [4;0;2]
 #   		| [3;0;1] [4;0;1]
-func _get_collision_constraints(map: Map, position: Vector3i, direction: Vector3i, collision_width: int) -> Array[Vector3i]:
-	var start_of_collision = position + direction
+func _get_collision_constraints(map: Map, position: Vector3i, direction: Vector3i) -> Array[Vector3i]:
 	var result: Array[Vector3i] = []
+	var directions = _get_collision_directions(direction);
 	
-	for w in range(0, collision_width):
-		var middle_position = start_of_collision + direction * w
-		result.append(middle_position)
+	for w in range(1, 3):
+		var middle_point = position + direction * w
+		result.append(middle_point)
 		
-		for h in range(1, collision_width):
-			var directions = _get_collision_directions(direction);
-			
-			for collision_direction in directions:
-				var collision_position = middle_position + collision_direction * h
+		for h in range(1, 2):
+			for side_direction in directions:
+				var side_point = middle_point + side_direction * h
+				result.append(side_point)
 				
-				if map.has_point(collision_position):
-					result.append(collision_position)
-			
-	return result
-
+	var filtered = result.filter(func (point):
+		return map.has_point(point)	
+	)
+	
+	return filtered
+					
 func _get_collision_directions(direction: Vector3i) -> Array[Vector3i]:
 	if direction == Vector3i.FORWARD or direction == Vector3i.BACK:
 		return [Vector3i.RIGHT, Vector3i.LEFT]
