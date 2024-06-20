@@ -26,15 +26,7 @@ var _passageways_generator: PassagewaysGenerator
 
 func _ready():
 	_map_generator = MapGenerator.new(grid_map)
-	
-	_rooms_generator = RoomsGenerator.new(
-		grid_map, 
-		rooms_amount, 
-		rooms_min_size, 
-		rooms_max_size, 
-		rooms_range_between,
-		rooms_iterations
-	)
+	_rooms_generator = RoomsGenerator.new(grid_map)
 	
 	_passageways_generator = PassagewaysGenerator.new(
 		get_tree(),
@@ -46,10 +38,9 @@ func _ready():
 func generate():
 	_clear_all()
 	_set_camera_position()
-	_draw_border()
 	
 	var map = await _map_generator.draw(map_width, map_height, map_border)
-	await _rooms_generator.draw(map)
+	await _rooms_generator.draw(map, rooms_amount, rooms_min_size, rooms_max_size, rooms_range_between, rooms_iterations)
 	await _passageways_generator.draw(map)
 	
 func _clear_all():
@@ -58,8 +49,6 @@ func _clear_all():
 	
 	for u in used:
 		grid_map.set_cell_item(u, item_id)
-		
-	_rooms_generator.clear_all()
 	
 func _set_camera_position():
 	var x = map_width / 2
