@@ -20,13 +20,12 @@ extends Node3D
 @export var passageway_min_length: int = 5
 @export var passageway_head_collistion_size: int = 3
 
-const WAIT_TIME = 0
-
+var _map_generator: MapGenerator
 var _rooms_generator: RoomsGenerator
 var _passageways_generator: PassagewaysGenerator
 
 func _ready():
-	var map = Map.new(map_width, map_height, map_border)
+	_map_generator = MapGenerator.new(grid_map)
 	
 	_rooms_generator = RoomsGenerator.new(
 		grid_map, 
@@ -34,7 +33,6 @@ func _ready():
 		rooms_min_size, 
 		rooms_max_size, 
 		rooms_range_between,
-		map,
 		rooms_iterations
 	)
 	
@@ -43,7 +41,6 @@ func _ready():
 		grid_map,
 		passageway_head_collistion_size,
 		passageway_min_length,
-		map
 	)
 
 func generate():
@@ -51,8 +48,9 @@ func generate():
 	_set_camera_position()
 	_draw_border()
 	
-	await _rooms_generator.draw_rooms()
-	await _passageways_generator.draw_passageways()
+	var map = await _map_generator.draw(map_width, map_height, map_border)
+	await _rooms_generator.draw(map)
+	await _passageways_generator.draw(map)
 	
 func _clear_all():
 	var used = grid_map.get_used_cells()

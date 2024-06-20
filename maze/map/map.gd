@@ -23,6 +23,12 @@ func get_max_x() -> int:
 	
 func get_max_y() -> int:
 	return _heigth - _border
+	
+func get_width() -> int:
+	return _width
 
+func get_height() -> int:
+	return _heigth
+	
 func has_point(point: Vector3i) -> bool:
 	return point.x > get_min_x() and point.x < get_max_x() and point.z > get_min_y() and point.z < get_max_y()

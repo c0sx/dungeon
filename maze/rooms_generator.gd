@@ -8,30 +8,26 @@ var _max_size: int
 var _amount: int
 var _range_between_rooms: int
 
-var _map: Map
-
-func _init(grid_map: GridMap, amount: int, min_size: int, max_size: int, range_between_rooms: int, map: Map, iterations: int):
+func _init(grid_map: GridMap, amount: int, min_size: int, max_size: int, range_between_rooms: int, iterations: int):
 	_grid_map = grid_map
 	_amount = amount
 	_min_size = min_size
 	_max_size = max_size
 	_iterations = iterations
 	_range_between_rooms = range_between_rooms
-	
-	_map = map
 
 func clear_all(): 
 	_rooms.clear()
 
-func draw_rooms():
-	_build_rooms()
+func draw(map: Map):
+	_build_rooms(map)
 	_draw_rooms()
 
-func _build_rooms():
+func _build_rooms(map: Map):
 	var iteration = 0
 
 	while _rooms.size() < _amount and iteration < _iterations:
-		var room = _build_room()
+		var room = _build_room(map)
 	
 		var is_intersects = _check_intersections(room, _rooms)
 		if not is_intersects:
@@ -39,13 +35,13 @@ func _build_rooms():
 				
 		iteration += 1
 
-func _build_room() -> Room: 
+func _build_room(map: Map) -> Room: 
 	var rng = RandomNumberGenerator.new()
 	
 	var width = rng.randi_range(_min_size, _max_size)
 	var height = rng.randi_range(_min_size, _max_size)
 	
-	var rect = _map.get_rect()
+	var rect = map.get_rect()
 	var position_x = rng.randf_range(rect.position.x, rect.size.x - width)
 	var position_z = rng.randi_range(rect.position.y, rect.size.y - height)
 	var position = Vector3i(position_x, 0, position_z)

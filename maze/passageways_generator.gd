@@ -2,30 +2,26 @@ class_name PassagewaysGenerator
 
 var _tree: SceneTree
 var _grid_map: GridMap
-var _map: Map
 var _collision_width: int
 var _min_length: int
 
-func _init(tree: SceneTree, grid_map: GridMap, collision_width: int, min_length: int, map: Map):
+func _init(tree: SceneTree, grid_map: GridMap, collision_width: int, min_length: int):
 	_tree = tree
 	
 	_grid_map = grid_map
 	_collision_width = collision_width
 	_min_length = min_length
-	_map = map
 	
-func draw_passageways():
-	for x in range(_map.get_min_x(), _map.get_max_x()):
-		for y in range(_map.get_min_y(), _map.get_max_y()):
+func draw(map: Map):
+	for x in range(map.get_min_x(), map.get_max_x()):
+		for y in range(map.get_min_y(), map.get_max_y()):
 			var point = Vector3i(x, 0, y)
-			var is_allowed = _is_allowed_for_path(point)
+			var is_allowed = _is_allowed_for_path(map, point)
 			
 			if is_allowed:
-				await _fill_passageway(point)
-	
-	print("corridors are filled")
+				await _fill_passageway(map, point)
 
-func _is_allowed_for_path(position: Vector3i) -> bool:
+func _is_allowed_for_path(map: Map, position: Vector3i) -> bool:
 	var directions: Array[Vector3i] = []
 	
 	for w in range(0, _collision_width):
@@ -38,16 +34,16 @@ func _is_allowed_for_path(position: Vector3i) -> bool:
 			var bottom_left_position = left_position + Vector3i.BACK * h
 			var bottom_right_position = right_position + Vector3i.BACK * h
 			
-			if _map.has_point(top_left_position):
+			if map.has_point(top_left_position):
 				directions.append(top_left_position)
 				
-			if _map.has_point(top_right_position):
+			if map.has_point(top_right_position):
 				directions.append(top_right_position)
 				
-			if _map.has_point(bottom_left_position):
+			if map.has_point(bottom_left_position):
 				directions.append(bottom_left_position)
 				
-			if _map.has_point(bottom_right_position):
+			if map.has_point(bottom_right_position):
 				directions.append(bottom_right_position)
 			
 	return directions.all(func (direction):
@@ -57,7 +53,7 @@ func _is_allowed_for_path(position: Vector3i) -> bool:
 	)
 	
 # https://weblog.jamisbuck.org/2011/1/27/maze-generation-growing-tree-algorithm
-func _fill_passageway(position: Vector3i):
+func _fill_passageway(map: Map, position: Vector3i):
 	var item_id = _grid_map.mesh_library.find_item_by_name("floor-opened")
 	var positions: Array[Vector3i] = [position]
 	var current_corridor_length = 0
@@ -70,7 +66,7 @@ func _fill_passageway(position: Vector3i):
 		_grid_map.set_cell_item(current_position, item_id)
 		await _tree.create_timer(0).timeout
 		
-		var unchecked_directions = _get_unvisited_neighbors(current_position)
+		var unchecked_directions = _get_unvisited_neighbors(map, current_position)
 		
 		if unchecked_directions.size() == 0:
 			positions.remove_at(position_index)
@@ -82,11 +78,11 @@ func _fill_passageway(position: Vector3i):
 				
 			positions.append(current_position + current_direction)
 
-func _get_unvisited_neighbors(position: Vector3i) -> Array[Vector3i]:
+func _get_unvisited_neighbors(map: Map, position: Vector3i) -> Array[Vector3i]:
 	var directions: Array[Vector3i] = [Vector3i.RIGHT, Vector3i.BACK, Vector3i.LEFT, Vector3i.FORWARD]
 	
 	return directions.filter(func (direction):
-		var points = _get_collision_constraints(position, direction)
+		var points = _get_collision_constraints(map, position, direction)
 		
 		return points.all(func (point): 
 			var cell = _grid_map.get_cell_item(point)
@@ -115,7 +111,7 @@ func _get_current_direction(current_length: int, current_direction: Vector3i, un
 #   		| [3;0;3] [4;0;3]
 # [2;0;2] 	| [3;0;2] [4;0;2]
 #   		| [3;0;1] [4;0;1]
-func _get_collision_constraints(position: Vector3i, direction: Vector3i) -> Array[Vector3i]:
+func _get_collision_constraints(map: Map, position: Vector3i, direction: Vector3i) -> Array[Vector3i]:
 	var start_of_collision = position + direction
 	var result: Array[Vector3i] = []
 	
@@ -129,7 +125,7 @@ func _get_collision_constraints(position: Vector3i, direction: Vector3i) -> Arra
 			for collision_direction in directions:
 				var collision_position = middle_position + collision_direction * h
 				
-				if _map.has_point(collision_position):
+				if map.has_point(collision_position):
 					result.append(collision_position)
 			
 	return result
