@@ -20,40 +20,25 @@ func draw(map: Map, rooms: Array[Room], passageways: Array[Passageway]):
 func _handle_connector(map: Map, point: Vector3i):
 	var item_id = _grid_map.mesh_library.find_item_by_name("connector")
 	
-	await _handle_horizontal_connector(map, point)
-	await _handle_vertical_connector(map, point)
-		
-func _handle_horizontal_connector(map: Map, point: Vector3i):
-	var item_id = _grid_map.mesh_library.find_item_by_name("connector")
-		
-	var left_point = point + Vector3i.LEFT
-	var right_point = point + Vector3i.RIGHT
-	var left_cell = _grid_map.get_cell_item(left_point)	
-	var right_cell = _grid_map.get_cell_item(right_point)
+	var horizontal = [Vector3i.LEFT, Vector3i.RIGHT]
+	var vertical = [Vector3i.FORWARD, Vector3i.BACK]
+	var sides = [horizontal, vertical]
 	
-	if [left_cell, right_cell].has(_grid_map.INVALID_CELL_ITEM):
-		return
+	for side in sides:
+		var point_a = point + side[0]
+		var point_b = point + side[1]
 		
-	var left_region = map.get_region(left_point)
-	var right_region = map.get_region(right_point)
+		var cell_a = _grid_map.get_cell_item(point_a)
+		var cell_b = _grid_map.get_cell_item(point_b)
+		var is_not_allowed = [cell_a, cell_b].any(func (cell):
+			return [_grid_map.INVALID_CELL_ITEM, item_id].has(cell)		
+		)
+		
+		if is_not_allowed:
+			continue
+		
+		var region_a = map.get_region(point_a)
+		var region_b = map.get_region(point_b)
 	
-	if left_region != right_region:
-		_grid_map.set_cell_item(point, item_id)	
-		
-		
-func _handle_vertical_connector(map: Map, point: Vector3i):
-	var item_id = _grid_map.mesh_library.find_item_by_name("connector")
-		
-	var top_point = point + Vector3i.FORWARD
-	var bottom_point = point + Vector3i.BACK
-	var top_cell = _grid_map.get_cell_item(top_point)	
-	var bottom_cell = _grid_map.get_cell_item(bottom_point)
-	
-	if [top_cell, bottom_cell].has(_grid_map.INVALID_CELL_ITEM):
-		return
-		
-	var top_region = map.get_region(top_point)
-	var bottom_region = map.get_region(bottom_point)
-	
-	if top_region != bottom_region:
-		_grid_map.set_cell_item(point, item_id)	
+		if region_a != region_b:
+			_grid_map.set_cell_item(point, item_id)

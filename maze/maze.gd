@@ -35,14 +35,10 @@ func generate():
 	
 	var map = await _map_generator.draw(map_width, map_height, map_border)
 	var rooms = await _rooms_generator.draw(map, rooms_amount, rooms_min_size, rooms_max_size, rooms_range_between, rooms_iterations)
-	
-	for room in rooms:
-		map.append_room(room)
+	map.append_rooms(rooms)
 		
 	var passageways = await _passageways_generator.draw(map, passageway_min_length)
-	
-	for passageway in passageways:
-		map.append_passageway(passageway)
+	map.append_passageways(passageways)
 		
 	await _connectors_generator.draw(map, rooms, passageways)
 	

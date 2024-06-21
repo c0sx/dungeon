@@ -39,11 +39,19 @@ func get_height() -> int:
 func has_point(point: Vector3i) -> bool:
 	return point.x >= get_min_x() and point.x <= get_max_x() and point.z >= get_min_y() and point.z <= get_max_y()
 
+func append_rooms(rooms: Array[Room]):
+	for room in rooms:
+		append_room(room)
+		
 func append_room(room: Room):
 	var points = room.get_points()
 	
 	for point in points:
 		_cells[point] = room
+		
+func append_passageways(passageways: Array[Passageway]):
+	for passageway in passageways:
+		append_passageway(passageway)
 
 func append_passageway(passageway: Passageway):
 	var points = passageway.get_points()
