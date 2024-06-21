@@ -28,3 +28,13 @@ func has_point(point: Vector3i) -> bool:
 	var rect = get_rect_2i()
 
 	return rect.has_point(Vector2i(point.x, point.z))
+
+func get_points() -> Array[Vector3i]:
+	var points: Array[Vector3i] = []
+	var rect = get_rect_2i()
+	
+	for x in range(rect.position.x, rect.end.x):
+		for y in range(rect.position.y, rect.end.y):
+			points.append(Vector3i(x, 0, y))
+			
+	return points

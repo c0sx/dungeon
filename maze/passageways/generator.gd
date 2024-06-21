@@ -8,13 +8,21 @@ func _init(tree: SceneTree, grid_map: GridMap):
 	_grid_map = grid_map
 	
 func draw(map: Map, min_length: int):
+	var passageways: Array[Passageway] = []
+	
 	for y in range(map.get_min_y(), map.get_max_y()):
 		for x in range(map.get_min_x(), map.get_max_x()):
 			var point = Vector3i(x, 0, y)
 			var is_allowed = _is_allowed_for_path(map, point)
 			
-			if is_allowed:
-				await _fill_passageway(map, point, min_length)
+			if not is_allowed:
+				continue
+				
+			var passageway = await _fill_passageway(map, point, min_length)
+			if passageway.size() > 1:
+				passageways.append(passageway)
+	
+	return passageways
 
 func _is_allowed_for_path(map: Map, position: Vector3i) -> bool:
 	var directions: Array[Vector3i] = []
@@ -45,7 +53,9 @@ func _is_allowed_for_path(map: Map, position: Vector3i) -> bool:
 	)
 	
 # https://weblog.jamisbuck.org/2011/1/27/maze-generation-growing-tree-algorithm
-func _fill_passageway(map: Map, position: Vector3i, min_length: int):
+func _fill_passageway(map: Map, position: Vector3i, min_length: int) -> Passageway:
+	var passageway = Passageway.new()
+	
 	var item_id = _grid_map.mesh_library.find_item_by_name("floor-opened")
 	var positions: Array[Vector3i] = [position]
 	var current_corridor_length = 0
@@ -55,6 +65,7 @@ func _fill_passageway(map: Map, position: Vector3i, min_length: int):
 		var position_index = positions.size() - 1
 		var current_position = positions[position_index]
 		_grid_map.set_cell_item(current_position, item_id)
+		passageway.append(current_position)
 		#await _tree.create_timer(0).timeout
 		
 		var unchecked_directions = await _get_unvisited_neighbors(map, current_position)
@@ -68,6 +79,8 @@ func _fill_passageway(map: Map, position: Vector3i, min_length: int):
 			current_corridor_length = result[1]
 				
 			positions.append(current_position + current_direction)
+	
+	return passageway
 
 func _get_unvisited_neighbors(map: Map, position: Vector3i) -> Array[Vector3i]:
 	var directions: Array[Vector3i] = [Vector3i.RIGHT, Vector3i.BACK, Vector3i.LEFT, Vector3i.FORWARD]
