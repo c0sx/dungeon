@@ -1,16 +1,30 @@
 class_name Room
 
-var position: Vector3i
-var width: int
-var heigth: int
+var _position: Vector3i
+var _width: int
+var _heigth: int
 
 func _init(position: Vector3i, width: int, height: int):
-	self.position = position
-	self.width = width
-	self.heigth = height
+	_position = position
+	_width = width
+	_heigth = height
 
 func get_rect_2i() -> Rect2i:
 	return Rect2i(
-		Vector2i(position.x, position.z),
-		Vector2i(width, heigth)
+		Vector2i(_position.x, _position.z),
+		Vector2i(_width, _heigth)
 	)
+
+func get_position() -> Vector3i:
+	return _position
+	
+func get_width() -> int:
+	return _width
+	
+func get_height() -> int:
+	return _heigth
+
+func has_point(point: Vector3i) -> bool:
+	var rect = get_rect_2i()
+
+	return rect.has_point(Vector2i(point.x, point.z))

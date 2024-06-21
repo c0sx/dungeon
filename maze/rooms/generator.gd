@@ -55,9 +55,9 @@ func _draw_rooms(rooms: Array[Room]):
 	var item_id = _grid_map.mesh_library.find_item_by_name("floor-opened")
 	
 	for room in rooms:
-		var position = room.position
-		var width = room.width
-		var height = room.heigth
+		var position = room.get_position()
+		var width = room.get_width()
+		var height = room.get_height()
 		
 		for w in width:
 			var x = position.x + w

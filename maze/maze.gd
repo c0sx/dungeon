@@ -22,19 +22,22 @@ extends Node3D
 var _map_generator: MapGenerator
 var _rooms_generator: RoomsGenerator
 var _passageways_generator: PassagewaysGenerator
+var _connectors_generator: ConnectorsGenerator
 
 func _ready():
 	_map_generator = MapGenerator.new(grid_map)
 	_rooms_generator = RoomsGenerator.new(grid_map)
 	_passageways_generator = PassagewaysGenerator.new(get_tree(), grid_map)
+	_connectors_generator = ConnectorsGenerator.new(get_tree(), grid_map)
 
 func generate():
 	_clear_all()
 	_set_camera_position()
 	
 	var map = await _map_generator.draw(map_width, map_height, map_border)
-	await _rooms_generator.draw(map, rooms_amount, rooms_min_size, rooms_max_size, rooms_range_between, rooms_iterations)
+	var rooms = await _rooms_generator.draw(map, rooms_amount, rooms_min_size, rooms_max_size, rooms_range_between, rooms_iterations)
 	await _passageways_generator.draw(map, passageway_min_length)
+	await _connectors_generator.draw(map, rooms)
 	
 func _clear_all():
 	var used = grid_map.get_used_cells()
