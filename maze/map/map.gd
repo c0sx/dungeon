@@ -4,8 +4,9 @@ var _width: int
 var _heigth: int
 var _border: int
 
-var _rooms: Array[Room]
-var _passageways: Array[Passageway]
+var _rooms: Array[Room] = []
+var _passageways: Array[Passageway] = []
+var _connectors: Array[Connector] = []
 var _cells: Dictionary
 
 func _init(width: int, height: int, border: int):
@@ -44,10 +45,18 @@ func append_rooms(rooms: Array[Room]):
 		append_room(room)
 		
 func append_room(room: Room):
+	_rooms.append(room)
+	
 	var points = room.get_points()
 	
 	for point in points:
 		_cells[point] = room
+		
+func get_rooms() -> Array[Room]:
+	return _rooms
+	
+func get_connectors() -> Array[Connector]:
+	return _connectors
 		
 func append_passageways(passageways: Array[Passageway]):
 	for passageway in passageways:
@@ -59,6 +68,26 @@ func append_passageway(passageway: Passageway):
 	for point in points:
 		_cells[point] = passageway
 		
+func append_connectors(connectors: Array[Connector]):
+	for connector in connectors:
+		append_connector(connector)
+		
+func append_connector(connector: Connector):
+	_connectors.append(connector)
+	
+	var point = connector.get_point()
+	
+	_cells[point] = connector
+
+func remove_connector(connector: Connector):
+	var index = _connectors.find(connector)
+	
+	if index == -1:
+		return
+	
+	_connectors.remove_at(index)
+	_cells.erase(connector.get_point())
+	
 func get_region(point: Vector3i):
 	if _cells.has(point):
 		return _cells.get(point)

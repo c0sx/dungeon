@@ -40,7 +40,10 @@ func generate():
 	var passageways = await _passageways_generator.draw(map, passageway_min_length)
 	map.append_passageways(passageways)
 		
-	await _connectors_generator.draw(map, rooms, passageways)
+	var connectors = await _connectors_generator.draw(map, rooms, passageways)
+	map.append_connectors(connectors)
+	
+	_uncarving(map)
 	
 func _clear_all():
 	var used = grid_map.get_used_cells()
@@ -62,3 +65,38 @@ func _draw_border():
 		for h in map_height:
 			if w == 0 or w == map_width - 1 or h == 0 or h == map_height - 1:
 				grid_map.set_cell_item(Vector3i(w, 0, h), item_id)
+
+func _uncarving(map: Map):
+	var used_rooms = []
+	var iterations = 1000
+	var iteration = 0
+	
+	while map.get_connectors().size() > 0 and iteration < iterations:
+		iteration += 1
+		
+		var item_id = grid_map.mesh_library.find_item_by_name("floor-opened")
+		var rng = RandomNumberGenerator.new()
+
+		var rooms = map.get_rooms()
+		var main_region_index = rng.randi_range(0, rooms.size() - 1)
+		if used_rooms.has(main_region_index):
+			continue
+			
+		used_rooms.append(main_region_index)
+		var main_region = rooms[main_region_index]
+		var region_connectors = map.get_connectors().filter(func (connector):
+			return main_region.is_adjacent_connector(connector)
+		)
+		
+		var connector_index = rng.randi_range(0, region_connectors.size() - 1)
+		var connector = region_connectors[connector_index]
+		grid_map.set_cell_item(connector.get_point(), item_id)
+		
+		for one in region_connectors:
+			if one == connector:
+				continue
+				
+			grid_map.set_cell_item(one.get_point(), grid_map.INVALID_CELL_ITEM)
+			map.remove_connector(one) 
+			
+	print("foo")

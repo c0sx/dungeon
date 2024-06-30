@@ -38,3 +38,10 @@ func get_points() -> Array[Vector3i]:
 			points.append(Vector3i(x, 0, y))
 			
 	return points
+
+func is_adjacent_connector(connector: Connector) -> bool:
+	var points = get_points()
+	
+	return points.any(func (point):
+		return connector.is_adjacent(point)	
+	)
