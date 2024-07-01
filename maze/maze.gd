@@ -43,7 +43,7 @@ func generate():
 	var connectors = await _connectors_generator.draw(map, rooms, passageways)
 	map.append_connectors(connectors)
 	
-	_uncarving(map)
+	await _set_connectors(map)
 	
 func _clear_all():
 	var used = grid_map.get_used_cells()
@@ -66,37 +66,68 @@ func _draw_border():
 			if w == 0 or w == map_width - 1 or h == 0 or h == map_height - 1:
 				grid_map.set_cell_item(Vector3i(w, 0, h), item_id)
 
-func _uncarving(map: Map):
-	var used_rooms = []
-	var iterations = 1000
-	var iteration = 0
+func _set_connectors(map: Map):
+	var main_region = _get_main_region(map)
+	var item_id = grid_map.mesh_library.find_item_by_name("floor-opened")
 	
-	while map.get_connectors().size() > 0 and iteration < iterations:
-		iteration += 1
+	var iter = 0
+	var iters = 2
+	while iter < iters:
+		iter += 1
 		
-		var item_id = grid_map.mesh_library.find_item_by_name("floor-opened")
-		var rng = RandomNumberGenerator.new()
+		var region_connectors = _get_adjacent_connectors(map, main_region)
+		var random_connector = _get_random_region_connector(region_connectors)
+		
+		grid_map.set_cell_item(random_connector.get_point(), item_id)
+		main_region.append([random_connector.get_point()])
+		
+		_remove_other_adjacent_connectors(map, random_connector, region_connectors)
+		
+		await _render_main_region(main_region)
 
-		var rooms = map.get_rooms()
-		var main_region_index = rng.randi_range(0, rooms.size() - 1)
-		if used_rooms.has(main_region_index):
+func _get_main_region(map: Map) -> Region:
+	var rng = RandomNumberGenerator.new()
+
+	var rooms = map.get_rooms()
+	var index = rng.randi_range(0, rooms.size() - 1)
+	var room = rooms[index]
+	
+	var region = Region.new()
+	region.append(room.get_points())
+	
+	return region
+
+func _get_adjacent_connectors(map: Map, main_region: Region) -> Array[Connector]:
+	var region_connectors: Array[Connector] = []
+	var connectors = map.get_connectors()
+	
+	for connector in connectors:
+		var region = Region.new()
+		region.append([connector.get_point()])
+		
+		if main_region.is_adjacent(region):
+			region_connectors.append(connector)
+	
+	return region_connectors
+
+func _get_random_region_connector(region_connectors: Array[Connector]) -> Connector:
+	var rng = RandomNumberGenerator.new()
+	var index = rng.randi_range(0, region_connectors.size() - 1)
+	var connector = region_connectors[index]
+	
+	return connector
+
+func _remove_other_adjacent_connectors(map: Map, connector: Connector, connectors: Array[Connector]):
+	for one in connectors:
+		if one == connector:
 			continue
 			
-		used_rooms.append(main_region_index)
-		var main_region = rooms[main_region_index]
-		var region_connectors = map.get_connectors().filter(func (connector):
-			return main_region.is_adjacent_connector(connector)
-		)
+		grid_map.set_cell_item(one.get_point(), grid_map.INVALID_CELL_ITEM)
+		map.remove_connector(one) 
+
+func _render_main_region(region: Region):
+	var item_id = grid_map.mesh_library.find_item_by_name("connector")
 		
-		var connector_index = rng.randi_range(0, region_connectors.size() - 1)
-		var connector = region_connectors[connector_index]
-		grid_map.set_cell_item(connector.get_point(), item_id)
-		
-		for one in region_connectors:
-			if one == connector:
-				continue
-				
-			grid_map.set_cell_item(one.get_point(), grid_map.INVALID_CELL_ITEM)
-			map.remove_connector(one) 
-			
-	print("foo")
+	for point in region.get_points():
+		grid_map.set_cell_item(point, item_id)
+		await get_tree().create_timer(0).timeout

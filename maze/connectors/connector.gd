@@ -15,5 +15,5 @@ func is_adjacent(point: Vector3i) -> bool:
 	)
 	
 	return points.any(func (side):
-		return side == point	
+		return side == point
 	)
