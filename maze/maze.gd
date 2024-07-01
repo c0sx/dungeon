@@ -79,6 +79,10 @@ func _set_connectors(map: Map):
 		var random_connector = _get_random_region_connector(region_connectors)
 		
 		grid_map.set_cell_item(random_connector.get_point(), item_id)
+		
+		# append connected region with main region
+		var connected_region = _get_connected_region(map, random_connector)
+		
 		main_region.append([random_connector.get_point()])
 		
 		_remove_other_adjacent_connectors(map, random_connector, region_connectors)
@@ -116,6 +120,11 @@ func _get_random_region_connector(region_connectors: Array[Connector]) -> Connec
 	var connector = region_connectors[index]
 	
 	return connector
+	
+func _get_connected_regions(map: Map, connector: Connector) -> Array[Region]:
+	var sides = [Vector3i.LEFT, Vector3i.RIGHT, Vector3i.FORWARD, Vector3i.BACK]
+
+	return []
 
 func _remove_other_adjacent_connectors(map: Map, connector: Connector, connectors: Array[Connector]):
 	for one in connectors:
