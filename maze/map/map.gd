@@ -93,3 +93,12 @@ func get_region(point: Vector3i):
 		return _cells.get(point)
 		
 	return null
+
+func remove_room(room: Room):
+	var index = _rooms.find(room)
+	
+	if index == -1:
+		return;
+		
+	_rooms.remove_at(index)
+	_cells.erase(room.get_points())

@@ -43,8 +43,22 @@ func generate():
 	var connectors = await _connectors_generator.draw(map, rooms, passageways)
 	map.append_connectors(connectors)
 	
-	await _set_connectors(map)
+	await _join_regions(map)
+
+func _join_regions(map: Map):
+	var item_id = grid_map.mesh_library.find_item_by_name("floor-opened")
 	
+	for room in map.get_rooms():
+		var region = Region.from_room(room)
+		var connectors = _get_adjacent_connectors(map, region)
+		var connector = _get_random_connector(connectors)
+		
+		grid_map.set_cell_item(connector.get_point(), item_id)
+		
+		for one in connectors:
+			if one != connector:
+				grid_map.set_cell_item(one.get_point(), grid_map.INVALID_CELL_ITEM)
+
 func _clear_all():
 	var used = grid_map.get_used_cells()
 	var item_id = grid_map.INVALID_CELL_ITEM
@@ -58,85 +72,21 @@ func _set_camera_position():
 	
 	camera.position = Vector3(x, camera.position.y, z)
 
-func _draw_border():
-	var item_id = grid_map.mesh_library.find_item_by_name("floor-opened")
-	
-	for w in map_width:
-		for h in map_height:
-			if w == 0 or w == map_width - 1 or h == 0 or h == map_height - 1:
-				grid_map.set_cell_item(Vector3i(w, 0, h), item_id)
-
-func _set_connectors(map: Map):
-	var main_region = _get_main_region(map)
-	var item_id = grid_map.mesh_library.find_item_by_name("floor-opened")
-	
-	var iter = 0
-	var iters = 2
-	while iter < iters:
-		iter += 1
-		
-		var region_connectors = _get_adjacent_connectors(map, main_region)
-		var random_connector = _get_random_region_connector(region_connectors)
-		
-		grid_map.set_cell_item(random_connector.get_point(), item_id)
-		
-		# append connected region with main region
-		var connected_region = _get_connected_region(map, random_connector)
-		
-		main_region.append([random_connector.get_point()])
-		
-		_remove_other_adjacent_connectors(map, random_connector, region_connectors)
-		
-		await _render_main_region(main_region)
-
-func _get_main_region(map: Map) -> Region:
-	var rng = RandomNumberGenerator.new()
-
-	var rooms = map.get_rooms()
-	var index = rng.randi_range(0, rooms.size() - 1)
-	var room = rooms[index]
-	
-	var region = Region.new()
-	region.append(room.get_points())
-	
-	return region
-
 func _get_adjacent_connectors(map: Map, main_region: Region) -> Array[Connector]:
 	var region_connectors: Array[Connector] = []
 	var connectors = map.get_connectors()
 	
 	for connector in connectors:
-		var region = Region.new()
-		region.append([connector.get_point()])
+		var region = Region.from_connector(connector)
 		
 		if main_region.is_adjacent(region):
 			region_connectors.append(connector)
 	
 	return region_connectors
 
-func _get_random_region_connector(region_connectors: Array[Connector]) -> Connector:
+func _get_random_connector(connectors: Array[Connector]) -> Connector:
 	var rng = RandomNumberGenerator.new()
-	var index = rng.randi_range(0, region_connectors.size() - 1)
-	var connector = region_connectors[index]
+	var index = rng.randi_range(0, connectors.size() - 1)
+	var connector = connectors[index]
 	
 	return connector
-	
-func _get_connected_regions(map: Map, connector: Connector) -> Array[Region]:
-	var sides = [Vector3i.LEFT, Vector3i.RIGHT, Vector3i.FORWARD, Vector3i.BACK]
-
-	return []
-
-func _remove_other_adjacent_connectors(map: Map, connector: Connector, connectors: Array[Connector]):
-	for one in connectors:
-		if one == connector:
-			continue
-			
-		grid_map.set_cell_item(one.get_point(), grid_map.INVALID_CELL_ITEM)
-		map.remove_connector(one) 
-
-func _render_main_region(region: Region):
-	var item_id = grid_map.mesh_library.find_item_by_name("connector")
-		
-	for point in region.get_points():
-		grid_map.set_cell_item(point, item_id)
-		await get_tree().create_timer(0).timeout

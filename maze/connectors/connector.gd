@@ -7,6 +7,9 @@ func _init(point: Vector3i):
 
 func get_point() -> Vector3i:
 	return _point
+	
+func get_points() -> Array[Vector3i]:
+	return [_point]
 
 func is_adjacent(point: Vector3i) -> bool:
 	var sides = [Vector3i.LEFT, Vector3i.RIGHT, Vector3i.FORWARD, Vector3i.BACK]

@@ -5,6 +5,18 @@ var _points: Array[Vector3i]
 func _init():
 	_points = []
 	
+static func from_room(room: Room) -> Region:
+	var region = Region.new()
+	region.append(room.get_points())
+	
+	return region
+	
+static func from_connector(connector: Connector) -> Region:
+	var region = Region.new()
+	region.append(connector.get_points())
+	
+	return region
+	
 func get_points() -> Array[Vector3i]:
 	return _points
 	
