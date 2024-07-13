@@ -1,7 +1,7 @@
+class_name Maze
 extends Node3D
 
 @onready var grid_map: GridMap = $GridMap
-@onready var camera: Camera3D = $Camera3D
 
 @export_subgroup("map")
 @export var map_width: int = 150
@@ -31,7 +31,6 @@ func _ready():
 
 func generate():
 	_clear_all()
-	_set_camera_position()
 	
 	var map = await _map_generator.draw(map_width, map_height, map_border)
 	var rooms = await _rooms_generator.draw(map, rooms_amount, rooms_min_size, rooms_max_size, rooms_range_between, rooms_iterations)
@@ -66,12 +65,6 @@ func _clear_all():
 	for u in used:
 		grid_map.set_cell_item(u, item_id)
 	
-func _set_camera_position():
-	var x = map_width / 2
-	var z = map_height / 2
-	
-	camera.position = Vector3(x, camera.position.y, z)
-
 func _get_adjacent_connectors(map: Map, main_region: Region) -> Array[Connector]:
 	var region_connectors: Array[Connector] = []
 	var connectors = map.get_connectors()
