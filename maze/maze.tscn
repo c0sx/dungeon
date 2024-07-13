@@ -1,21 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://byvfy0c6eo1wq"]
+[gd_scene load_steps=3 format=3 uid="uid://byvfy0c6eo1wq"]
 
 [ext_resource type="MeshLibrary" uid="uid://bsqedl1i7616p" path="res://resources/meshes/tileset/tileset3.tres" id="1_rs32l"]
 [ext_resource type="Script" path="res://maze/maze.gd" id="1_sc1mc"]
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_b8s0c"]
-sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
-ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
-
-[sub_resource type="Sky" id="Sky_7o1ny"]
-sky_material = SubResource("ProceduralSkyMaterial_b8s0c")
-
-[sub_resource type="Environment" id="Environment_kj1si"]
-background_mode = 1
-background_color = Color(0.078815, 0.078815, 0.0788149, 0.0352941)
-sky = SubResource("Sky_7o1ny")
-tonemap_mode = 2
-glow_enabled = true
 
 [node name="Maze" type="Node3D"]
 script = ExtResource("1_sc1mc")
@@ -25,32 +11,9 @@ rooms_min_size = 6
 rooms_max_size = 14
 rooms_range_between = 2
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_kj1si")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
-shadow_enabled = true
-
 [node name="GridMap" type="GridMap" parent="."]
 mesh_library = ExtResource("1_rs32l")
 cell_size = Vector3(1, 1, 1)
-
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, -6.97574e-16, -1.5246e-23, -1.5246e-23, -4.37114e-08, 1, -6.97574e-16, -1, -4.37114e-08, 2.08165e-12, 100, 2.08165e-12)
-
-[node name="Button" type="Button" parent="."]
-anchors_preset = -1
-anchor_left = 0.9
-anchor_top = 0.9
-anchor_right = 0.99
-anchor_bottom = 0.99
-offset_left = -0.360123
-offset_top = 0.479929
-offset_right = -0.280052
-offset_bottom = 0.239933
-grow_horizontal = 0
-grow_vertical = 0
-text = "Generate"
-
-[connection signal="button_down" from="Button" to="." method="generate"]
+data = {
+"cells": PackedInt32Array(0, 0, 7)
+}
