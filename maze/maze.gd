@@ -29,6 +29,12 @@ func _ready():
 	_passageways_generator = PassagewaysGenerator.new(get_tree(), grid_map)
 	_connectors_generator = ConnectorsGenerator.new(get_tree(), grid_map)
 
+func get_map_width() -> int:
+	return map_width
+
+func get_map_height() -> int:
+	return map_height
+
 func generate():
 	_clear_all()
 	
@@ -43,20 +49,6 @@ func generate():
 	map.append_connectors(connectors)
 	
 	await _join_regions(map)
-
-func _join_regions(map: Map):
-	var item_id = grid_map.mesh_library.find_item_by_name("floor-opened")
-	
-	for room in map.get_rooms():
-		var region = Region.from_room(room)
-		var connectors = _get_adjacent_connectors(map, region)
-		var connector = _get_random_connector(connectors)
-		
-		grid_map.set_cell_item(connector.get_point(), item_id)
-		
-		for one in connectors:
-			if one != connector:
-				grid_map.set_cell_item(one.get_point(), grid_map.INVALID_CELL_ITEM)
 
 func _clear_all():
 	var used = grid_map.get_used_cells()
@@ -83,3 +75,18 @@ func _get_random_connector(connectors: Array[Connector]) -> Connector:
 	var connector = connectors[index]
 	
 	return connector
+	
+func _join_regions(map: Map):
+	var item_id = grid_map.mesh_library.find_item_by_name("floor-opened")
+	
+	for room in map.get_rooms():
+		var region = Region.from_room(room)
+		var connectors = _get_adjacent_connectors(map, region)
+		var connector = _get_random_connector(connectors)
+		
+		grid_map.set_cell_item(connector.get_point(), item_id)
+		
+		for one in connectors:
+			if one != connector:
+				grid_map.set_cell_item(one.get_point(), grid_map.INVALID_CELL_ITEM)
+

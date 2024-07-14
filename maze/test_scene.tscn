@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://dtkpalqh4v6du"]
+
+[ext_resource type="Script" path="res://maze/test_scene.gd" id="1_2p1pf"]
+[ext_resource type="PackedScene" uid="uid://byvfy0c6eo1wq" path="res://maze/maze.tscn" id="2_0sjms"]
+
+[node name="TestScene" type="Node3D" node_paths=PackedStringArray("maze", "camera")]
+script = ExtResource("1_2p1pf")
+maze = NodePath("Maze")
+camera = NodePath("10001")
+
+[node name="Maze" parent="." instance=ExtResource("2_0sjms")]
+
+[node name="10001" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 200, 2.08165e-12)
