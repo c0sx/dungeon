@@ -14,6 +14,12 @@ func _init(width: int, height: int):
 	
 	_cells = Dictionary()
 
+func get_iterator() -> MapIterator:
+	var start = Vector3i(0, 0, 0)
+	var end = Vector3i(_width, 0, _heigth)
+	
+	return MapIterator.new(start, end)
+
 func get_rect() -> Rect2i:
 	return Rect2i(0, 0, _width, _heigth)
 

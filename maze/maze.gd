@@ -18,11 +18,13 @@ extends Node3D
 @export var passageway_min_length: int = 5
 
 var _rooms_generator: RoomsGenerator
+var _rooms_renderer: RoomsRenderer
 var _passageways_generator: PassagewaysGenerator
 var _connectors_generator: ConnectorsGenerator
 
 func _ready():
-	_rooms_generator = RoomsGenerator.new(grid_map)
+	_rooms_generator = RoomsGenerator.new()
+	_rooms_renderer = RoomsRenderer.new(grid_map)
 	_passageways_generator = PassagewaysGenerator.new(get_tree(), grid_map)
 	_connectors_generator = ConnectorsGenerator.new(get_tree(), grid_map)
 
@@ -32,13 +34,19 @@ func get_map_width() -> int:
 func get_map_height() -> int:
 	return map_height
 
+# todo: hardcoded for testing
+func get_map_scale() -> int:
+	return 4
+
 func generate():
 	_clear_all()
 	
 	var map = Map.new(map_width, map_height)
 	
-	var rooms = await _rooms_generator.draw(map, rooms_amount, rooms_min_size, rooms_max_size, rooms_range_between, rooms_iterations)
+	var rooms = await _rooms_generator.generate(map, rooms_amount, rooms_min_size, rooms_max_size, rooms_range_between, rooms_iterations)
 	map.append_rooms(rooms)
+	
+	await _rooms_renderer.render(rooms)
 		
 	var passageways = await _passageways_generator.draw(map, passageway_min_length)
 	map.append_passageways(passageways)

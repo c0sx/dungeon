@@ -9,19 +9,18 @@ func _init(tree: SceneTree, grid_map: GridMap):
 	
 func draw(map: Map, min_length: int):
 	var passageways: Array[Passageway] = []
+	var map_iterator = map.get_iterator()
 	
-	for y in range(map.get_min_y(), map.get_max_y()):
-		for x in range(map.get_min_x(), map.get_max_x()):
-			var point = Vector3i(x, 0, y)
-			var is_allowed = _is_allowed_for_path(map, point)
+	for point in map.get_iterator():
+		var is_allowed = _is_allowed_for_path(map, point)
+		
+		if not is_allowed:
+			continue
+		
+		var passageway = await _fill_passageway(map, point, min_length)
+		if passageway.size() > 1:
+			passageways.append(passageway)
 			
-			if not is_allowed:
-				continue
-				
-			var passageway = await _fill_passageway(map, point, min_length)
-			if passageway.size() > 1:
-				passageways.append(passageway)
-	
 	return passageways
 
 func _is_allowed_for_path(map: Map, position: Vector3i) -> bool:
@@ -49,6 +48,7 @@ func _is_allowed_for_path(map: Map, position: Vector3i) -> bool:
 	)
 	
 	return filtered.all(func (direction):
+		# check without _grid_map
 		return _grid_map.get_cell_item(direction) == _grid_map.INVALID_CELL_ITEM
 	)
 	
@@ -66,7 +66,6 @@ func _fill_passageway(map: Map, position: Vector3i, min_length: int) -> Passagew
 		var current_position = positions[position_index]
 		_grid_map.set_cell_item(current_position, item_id)
 		passageway.append(current_position)
-		#await _tree.create_timer(0).timeout
 		
 		var unchecked_directions = await _get_unvisited_neighbors(map, current_position)
 		
@@ -88,25 +87,6 @@ func _get_unvisited_neighbors(map: Map, position: Vector3i) -> Array[Vector3i]:
 	
 	for direction in directions:
 		var collision_rect = _get_collision_constraints(map, position, direction)
-		
-		## region
-		## render collisions for tests
-		#var collisions = collision_rect.filter(func (one):
-			#return _grid_map.get_cell_item(one) == _grid_map.INVALID_CELL_ITEM	
-		#)
-		#
-		#for point in collisions:
-			#var item_id = _grid_map.mesh_library.find_item_by_name("floor-opened")
-			#_grid_map.set_cell_item(point, item_id)
-			#
-		#await _tree.create_timer(0).timeout
-		#
-		#for point in collisions:
-			#_grid_map.set_cell_item(point, _grid_map.INVALID_CELL_ITEM)
-			#
-		#await _tree.create_timer(0).timeout
-		### endregion
-			
 		var is_allowed = collision_rect.size() > 0 and collision_rect.all(func (point): 
 			return _grid_map.get_cell_item(point) == _grid_map.INVALID_CELL_ITEM
 		)
@@ -152,7 +132,7 @@ func _get_collision_constraints(map: Map, position: Vector3i, direction: Vector3
 	)
 	
 	return filtered
-					
+
 func _get_collision_directions(direction: Vector3i) -> Array[Vector3i]:
 	if direction == Vector3i.FORWARD or direction == Vector3i.BACK:
 		return [Vector3i.RIGHT, Vector3i.LEFT]
