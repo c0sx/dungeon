@@ -6,9 +6,9 @@
 [node name="TestScene" type="Node3D" node_paths=PackedStringArray("maze", "camera")]
 script = ExtResource("1_2p1pf")
 maze = NodePath("Maze")
-camera = NodePath("10001")
+camera = NodePath("Camera3D")
 
 [node name="Maze" parent="." instance=ExtResource("2_0sjms")]
 
-[node name="10001" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 200, 2.08165e-12)
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, -6.97574e-16, -1.5246e-23, -1.5246e-23, -4.37114e-08, 1, -6.97574e-16, -1, -4.37114e-08, 2.08165e-12, 100, 2.08165e-12)
