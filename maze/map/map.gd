@@ -16,7 +16,7 @@ func _init(width: int, height: int):
 
 func get_iterator() -> MapIterator:
 	var start = Vector3i(0, 0, 0)
-	var end = Vector3i(_width, 0, _heigth)
+	var end = Vector3i(_width - 1, 0, _heigth - 1)
 	
 	return MapIterator.new(start, end)
 

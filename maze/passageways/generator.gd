@@ -9,47 +9,35 @@ func _init(tree: SceneTree, grid_map: GridMap):
 	
 func draw(map: Map, min_length: int):
 	var passageways: Array[Passageway] = []
-	var map_iterator = map.get_iterator()
 	
 	for point in map.get_iterator():
 		var is_allowed = _is_allowed_for_path(map, point)
-		
 		if not is_allowed:
 			continue
-		
+			
 		var passageway = await _fill_passageway(map, point, min_length)
 		if passageway.size() > 1:
 			passageways.append(passageway)
-			
+	
 	return passageways
-
+	
 func _is_allowed_for_path(map: Map, position: Vector3i) -> bool:
 	var directions: Array[Vector3i] = []
+	var start_area = PassagewayStartPointArea.new(position, 2)
 	
-	for w in range(0, 2):
-		var left_position = position + Vector3i.LEFT * w
-		var right_position = position + Vector3i.RIGHT * w
-		directions.append(left_position)
-		directions.append(right_position)
-		
-		for h in range(1, 2):
-			var top_left_position = left_position + Vector3i.FORWARD * h
-			var top_right_position = right_position + Vector3i.FORWARD * h
-			var bottom_left_position = left_position + Vector3i.BACK * h
-			var bottom_right_position = right_position + Vector3i.BACK * h
-			
-			directions.append(top_left_position)
-			directions.append(top_right_position)
-			directions.append(bottom_left_position)
-			directions.append(bottom_right_position)
-	
-	var filtered = directions.filter(func (point):
+	var area_points = start_area.get_points()
+	var filtered = area_points.filter(func (point):
 		return map.has_point(point)
 	)
 	
-	return filtered.all(func (direction):
-		# check without _grid_map
-		return _grid_map.get_cell_item(direction) == _grid_map.INVALID_CELL_ITEM
+	return filtered.all(func (point):
+		var item = _grid_map.get_cell_item(point)
+		var region = map.get_region(point)
+		
+		# todo: stopped here
+		return region == null
+		
+		return _grid_map.get_cell_item(point) == _grid_map.INVALID_CELL_ITEM
 	)
 	
 # https://weblog.jamisbuck.org/2011/1/27/maze-generation-growing-tree-algorithm

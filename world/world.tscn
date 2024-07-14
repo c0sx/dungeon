@@ -48,6 +48,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.8736, 1.94192, -2.964)
 
 [node name="Maze" parent="." instance=ExtResource("4_3fb7g")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, -0.5, -3)
+map_width = 50
+map_height = 50
+rooms_amount = 20
+rooms_max_size = 11
 
 [node name="GUI" parent="." instance=ExtResource("5_y7ail")]
 
