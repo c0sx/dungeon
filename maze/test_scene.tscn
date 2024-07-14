@@ -1,12 +1,32 @@
-[gd_scene load_steps=3 format=3 uid="uid://dtkpalqh4v6du"]
+[gd_scene load_steps=6 format=3 uid="uid://dtkpalqh4v6du"]
 
 [ext_resource type="Script" path="res://maze/test_scene.gd" id="1_2p1pf"]
 [ext_resource type="PackedScene" uid="uid://byvfy0c6eo1wq" path="res://maze/maze.tscn" id="2_0sjms"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_lfhmx"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_60onl"]
+sky_material = SubResource("ProceduralSkyMaterial_lfhmx")
+
+[sub_resource type="Environment" id="Environment_uqqmu"]
+background_mode = 1
+sky = SubResource("Sky_60onl")
+tonemap_mode = 2
+glow_enabled = true
 
 [node name="TestScene" type="Node3D" node_paths=PackedStringArray("maze", "camera")]
 script = ExtResource("1_2p1pf")
 maze = NodePath("Maze")
 camera = NodePath("Camera3D")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_uqqmu")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
 
 [node name="Maze" parent="." instance=ExtResource("2_0sjms")]
 
