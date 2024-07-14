@@ -6,7 +6,6 @@ extends Node3D
 @export_subgroup("map")
 @export var map_width: int = 150
 @export var map_height: int = 150
-@export var map_border: int = 2
 
 @export_subgroup("rooms")
 @export var rooms_iterations: int = 1000
@@ -18,21 +17,26 @@ extends Node3D
 @export_subgroup("passageway")
 @export var passageway_min_length: int = 5
 
-var _map_generator: MapGenerator
 var _rooms_generator: RoomsGenerator
 var _passageways_generator: PassagewaysGenerator
 var _connectors_generator: ConnectorsGenerator
 
 func _ready():
-	_map_generator = MapGenerator.new(grid_map)
 	_rooms_generator = RoomsGenerator.new(grid_map)
 	_passageways_generator = PassagewaysGenerator.new(get_tree(), grid_map)
 	_connectors_generator = ConnectorsGenerator.new(get_tree(), grid_map)
 
+func get_map_width() -> int:
+	return map_width
+
+func get_map_height() -> int:
+	return map_height
+
 func generate():
 	_clear_all()
 	
-	var map = await _map_generator.draw(map_width, map_height, map_border)
+	var map = Map.new(map_width, map_height)
+	
 	var rooms = await _rooms_generator.draw(map, rooms_amount, rooms_min_size, rooms_max_size, rooms_range_between, rooms_iterations)
 	map.append_rooms(rooms)
 		
@@ -43,20 +47,6 @@ func generate():
 	map.append_connectors(connectors)
 	
 	await _join_regions(map)
-
-func _join_regions(map: Map):
-	var item_id = grid_map.mesh_library.find_item_by_name("floor-opened")
-	
-	for room in map.get_rooms():
-		var region = Region.from_room(room)
-		var connectors = _get_adjacent_connectors(map, region)
-		var connector = _get_random_connector(connectors)
-		
-		grid_map.set_cell_item(connector.get_point(), item_id)
-		
-		for one in connectors:
-			if one != connector:
-				grid_map.set_cell_item(one.get_point(), grid_map.INVALID_CELL_ITEM)
 
 func _clear_all():
 	var used = grid_map.get_used_cells()
@@ -83,3 +73,18 @@ func _get_random_connector(connectors: Array[Connector]) -> Connector:
 	var connector = connectors[index]
 	
 	return connector
+	
+func _join_regions(map: Map):
+	var item_id = grid_map.mesh_library.find_item_by_name("floor-opened")
+	
+	for room in map.get_rooms():
+		var region = Region.from_room(room)
+		var connectors = _get_adjacent_connectors(map, region)
+		var connector = _get_random_connector(connectors)
+		
+		grid_map.set_cell_item(connector.get_point(), item_id)
+		
+		for one in connectors:
+			if one != connector:
+				grid_map.set_cell_item(one.get_point(), grid_map.INVALID_CELL_ITEM)
+

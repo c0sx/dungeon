@@ -2,34 +2,32 @@ class_name Map
 
 var _width: int
 var _heigth: int
-var _border: int
 
 var _rooms: Array[Room] = []
 var _passageways: Array[Passageway] = []
 var _connectors: Array[Connector] = []
 var _cells: Dictionary
 
-func _init(width: int, height: int, border: int):
+func _init(width: int, height: int):
 	_width = width
 	_heigth = height
-	_border = border
 	
 	_cells = Dictionary()
 
 func get_rect() -> Rect2i:
-	return Rect2i(_border, _border, _width - _border, _heigth - _border)
+	return Rect2i(0, 0, _width, _heigth)
 
 func get_min_x() -> int:
-	return _border
+	return 0
 
 func get_min_y() -> int:
-	return _border
+	return 0
 
 func get_max_x() -> int:
-	return _width - _border - 1
+	return _width - 1
 	
 func get_max_y() -> int:
-	return _heigth - _border - 1
+	return _heigth - 1
 	
 func get_width() -> int:
 	return _width
