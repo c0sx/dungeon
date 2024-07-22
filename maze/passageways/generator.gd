@@ -34,9 +34,6 @@ func _is_allowed_for_path(map: Map, position: Vector3i) -> bool:
 		var item = _grid_map.get_cell_item(point)
 		var region = map.get_region(point)
 		
-		# todo: stopped here
-		return region == null
-		
 		return _grid_map.get_cell_item(point) == _grid_map.INVALID_CELL_ITEM
 	)
 	
