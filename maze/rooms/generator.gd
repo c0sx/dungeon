@@ -15,6 +15,7 @@ func _build_rooms(map: Map, amount: int, min_size: int, max_size: int, range: in
 		var is_intersects = _check_intersections(room, rooms, range)
 		if not is_intersects:
 			rooms.append(room)
+			map.append_room(room)
 				
 		iteration += 1
 	

@@ -41,7 +41,7 @@ func get_width() -> int:
 func get_height() -> int:
 	return _heigth
 	
-func has_point(point: Vector3i) -> bool:
+func includes(point: Vector3i) -> bool:
 	return point.x >= get_min_x() and point.x <= get_max_x() and point.z >= get_min_y() and point.z <= get_max_y()
 
 func append_rooms(rooms: Array[Room]):

@@ -10,3 +10,6 @@ func size() -> int:
 
 func get_points() -> Array[Vector3i]:
 	return _points
+
+func includes(point: Vector3i) -> bool:
+	return _points.has(point)

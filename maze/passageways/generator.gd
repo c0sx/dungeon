@@ -1,47 +1,38 @@
 class_name PassagewaysGenerator
 
-var _tree: SceneTree
-var _grid_map: GridMap
-
-func _init(tree: SceneTree, grid_map: GridMap):
-	_tree = tree
-	_grid_map = grid_map
-	
-func draw(map: Map, min_length: int):
+func generate(map: Map, min_length: int):
 	var passageways: Array[Passageway] = []
 	
 	for point in map.get_iterator():
-		var is_allowed = _is_allowed_for_path(map, point)
+		var is_allowed = _check_start_point(map, point)
 		if not is_allowed:
 			continue
 			
-		var passageway = await _fill_passageway(map, point, min_length)
+		var passageway = await _generate_passageway(map, point, min_length)
 		if passageway.size() > 1:
 			passageways.append(passageway)
+			map.append_passageway(passageway)
 	
 	return passageways
 	
-func _is_allowed_for_path(map: Map, position: Vector3i) -> bool:
+func _check_start_point(map: Map, position: Vector3i) -> bool:
 	var directions: Array[Vector3i] = []
 	var start_area = PassagewayStartPointArea.new(position, 2)
 	
 	var area_points = start_area.get_points()
 	var filtered = area_points.filter(func (point):
-		return map.has_point(point)
+		return map.includes(point)
 	)
 	
 	return filtered.all(func (point):
-		var item = _grid_map.get_cell_item(point)
 		var region = map.get_region(point)
 		
-		return _grid_map.get_cell_item(point) == _grid_map.INVALID_CELL_ITEM
+		return region == null
 	)
 	
 # https://weblog.jamisbuck.org/2011/1/27/maze-generation-growing-tree-algorithm
-func _fill_passageway(map: Map, position: Vector3i, min_length: int) -> Passageway:
+func _generate_passageway(map: Map, position: Vector3i, min_length: int) -> Passageway:
 	var passageway = Passageway.new()
-	
-	var item_id = _grid_map.mesh_library.find_item_by_name("floor-opened")
 	var positions: Array[Vector3i] = [position]
 	var current_corridor_length = 0
 	var current_direction: Vector3i = Vector3i.ZERO
@@ -49,10 +40,10 @@ func _fill_passageway(map: Map, position: Vector3i, min_length: int) -> Passagew
 	while positions.size() > 0:
 		var position_index = positions.size() - 1
 		var current_position = positions[position_index]
-		_grid_map.set_cell_item(current_position, item_id)
+		
 		passageway.append(current_position)
 		
-		var unchecked_directions = await _get_unvisited_neighbors(map, current_position)
+		var unchecked_directions = await _get_unvisited_neighbors(map, passageway, current_position)
 		
 		if unchecked_directions.size() == 0:
 			positions.remove_at(position_index)
@@ -66,14 +57,15 @@ func _fill_passageway(map: Map, position: Vector3i, min_length: int) -> Passagew
 	
 	return passageway
 
-func _get_unvisited_neighbors(map: Map, position: Vector3i) -> Array[Vector3i]:
+func _get_unvisited_neighbors(map: Map, passageway: Passageway, position: Vector3i) -> Array[Vector3i]:
 	var directions: Array[Vector3i] = [Vector3i.RIGHT, Vector3i.BACK, Vector3i.LEFT, Vector3i.FORWARD]
 	var filtered: Array[Vector3i] = []
 	
 	for direction in directions:
 		var collision_rect = _get_collision_constraints(map, position, direction)
 		var is_allowed = collision_rect.size() > 0 and collision_rect.all(func (point): 
-			return _grid_map.get_cell_item(point) == _grid_map.INVALID_CELL_ITEM
+			# check that point is empty
+			return map.get_region(point) == null and not passageway.includes(point)
 		)
 		
 		if is_allowed:
@@ -113,7 +105,7 @@ func _get_collision_constraints(map: Map, position: Vector3i, direction: Vector3
 				result.append(side_point)
 				
 	var filtered = result.filter(func (point):
-		return map.has_point(point)	
+		return map.includes(point)
 	)
 	
 	return filtered
