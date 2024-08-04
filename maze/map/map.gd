@@ -14,6 +14,12 @@ func _init(width: int, height: int):
 	
 	_cells = Dictionary()
 
+func get_iterator() -> MapIterator:
+	var start = Vector3i(0, 0, 0)
+	var end = Vector3i(_width - 1, 0, _heigth - 1)
+	
+	return MapIterator.new(start, end)
+
 func get_rect() -> Rect2i:
 	return Rect2i(0, 0, _width, _heigth)
 
@@ -35,7 +41,7 @@ func get_width() -> int:
 func get_height() -> int:
 	return _heigth
 	
-func has_point(point: Vector3i) -> bool:
+func includes(point: Vector3i) -> bool:
 	return point.x >= get_min_x() and point.x <= get_max_x() and point.z >= get_min_y() and point.z <= get_max_y()
 
 func append_rooms(rooms: Array[Room]):
