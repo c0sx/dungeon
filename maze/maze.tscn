@@ -13,7 +13,8 @@ rooms_range_between = 2
 
 [node name="GridMap" type="GridMap" parent="."]
 mesh_library = ExtResource("1_rs32l")
-cell_size = Vector3(1, 1, 1)
+cell_size = Vector3(4, 1, 4)
+cell_scale = 4.0
 data = {
 "cells": PackedInt32Array(0, 0, 7)
 }
