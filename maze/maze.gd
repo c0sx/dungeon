@@ -22,23 +22,21 @@ var _rooms_renderer: RoomsRenderer
 var _passageways_generator: PassagewaysGenerator
 var _passageways_renderer: PassagewaysRenderer
 var _connectors_generator: ConnectorsGenerator
+var _connectors_renderer: ConnectorsRenderer
 
 func _ready():
 	_rooms_generator = RoomsGenerator.new()
 	_rooms_renderer = RoomsRenderer.new(grid_map)
-	_passageways_generator = PassagewaysGenerator.new(get_tree(), grid_map)
+	_passageways_generator = PassagewaysGenerator.new()
 	_passageways_renderer = PassagewaysRenderer.new(grid_map)
 	_connectors_generator = ConnectorsGenerator.new(get_tree(), grid_map)
+	_connectors_renderer = ConnectorsRenderer.new(grid_map)
 
 func get_map_width() -> int:
 	return map_width
 
 func get_map_height() -> int:
 	return map_height
-
-# todo: hardcoded for testing
-func get_map_scale() -> int:
-	return 4
 
 func generate():
 	_clear_all()
@@ -52,6 +50,7 @@ func generate():
 	await _rooms_renderer.render(rooms)
 	await _passageways_renderer.render(passageways)
 	
+	# todo: split connectors
 	var connectors = await _connectors_generator.draw(map, rooms, passageways)
 	map.append_connectors(connectors)
 	
